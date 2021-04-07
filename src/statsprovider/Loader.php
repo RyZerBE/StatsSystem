@@ -4,6 +4,7 @@ namespace statsprovider;
 
 use pocketmine\plugin\PluginBase;
 use pocketmine\Server;
+use statsprovider\provider\StatsProvider;
 use function var_dump;
 
 class Loader extends PluginBase {
