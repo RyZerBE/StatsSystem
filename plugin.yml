@@ -1,4 +1,5 @@
-name: StatsProvider
-version: 1.0
+name: StatsSystem
+author: HimmelKreis4865
+version: 1.0.0
 api: 3.0.0
-main: statsprovider\Loader
+main: HimmelKreis4865\StatsSystem\StatsSystem
