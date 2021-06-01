@@ -59,4 +59,37 @@ final class ProviderUtils {
 		$mysql->removeEntries($player);
 		$mysql->close();
 	}
+	
+	/**
+	 * Updates a statistic for a player
+	 *
+	 * @api
+	 *
+	 * @param string $player
+	 * @param string $statistic
+	 * @param $value
+	 * @param bool $monthly
+	 */
+	public static function updateStatistic(string $player, string $statistic, $value, bool $monthly = false): void {
+		$mysql = new MySQLProvider();
+		
+		$mysql->updateStatistic($player, $statistic, $value, $monthly);
+		$mysql->close();
+	}
+	
+	/**
+	 * Updates multiple statistics for a player
+	 *
+	 * @api
+	 *
+	 * @param string $player
+	 * @param array $statistics [database_key => new_value]
+	 * @param bool $monthly
+	 */
+	public static function updateStatistics(string $player, array $statistics, bool $monthly = false): void {
+		$mysql = new MySQLProvider();
+		
+		$mysql->updateStatistics($player, $statistics, $monthly);
+		$mysql->close();
+	}
 }

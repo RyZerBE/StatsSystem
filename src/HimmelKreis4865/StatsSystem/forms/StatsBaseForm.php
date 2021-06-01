@@ -4,13 +4,10 @@ namespace HimmelKreis4865\StatsSystem\forms;
 
 use HimmelKreis4865\StatsSystem\libs\pmforms\MenuForm;
 use HimmelKreis4865\StatsSystem\libs\pmforms\MenuOption;
-use HimmelKreis4865\StatsSystem\provider\ProviderUtils;
 use HimmelKreis4865\StatsSystem\StatsSystem;
 use HimmelKreis4865\StatsSystem\utils\AsyncUtils;
 use HimmelKreis4865\StatsSystem\utils\StackedPlayerStatistics;
 use pocketmine\Player;
-use Thread;
-use function var_dump;
 
 class StatsBaseForm extends MenuForm {
 
@@ -18,7 +15,6 @@ class StatsBaseForm extends MenuForm {
 		parent::__construct("Statistics", "", [ new MenuOption("Your statistics"), new MenuOption("Search player") ], function (Player $player, int $selectedOption): void {
 			switch ($selectedOption) {
 				case 0:
-					var_dump(Thread::getCurrentThreadId());
 					AsyncUtils::getStatistics($player->getName(), function (?StackedPlayerStatistics $statistics) use ($player) : void {
 						if ($player === null or !$player->isConnected()) return;
 						

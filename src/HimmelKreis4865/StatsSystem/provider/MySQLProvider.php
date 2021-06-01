@@ -7,10 +7,12 @@ use HimmelKreis4865\StatsSystem\utils\PlayerStatistic;
 use HimmelKreis4865\StatsSystem\utils\StackedPlayerStatistics;
 use mysqli;
 use RuntimeException;
+use function array_keys;
+use function array_map;
+use function array_merge;
+use function array_values;
 use function is_numeric;
-use function json_encode;
 use function mysqli_connect;
-use function var_dump;
 use const MYSQLI_ASSOC;
 
 class MySQLProvider {
@@ -75,7 +77,6 @@ class MySQLProvider {
 		
 		$entries = [];
 		foreach ($result->fetch_all(MYSQLI_ASSOC) as $data) {
-			var_dump("mysql data : " . json_encode($data));
 			$entries[] = new PlayerStatistic($data["player"], $data[$column]);
 		}
 		return $entries;
@@ -91,9 +92,32 @@ class MySQLProvider {
 	 *
 	 * @return bool
 	 */
-	public function updateStatistic(string $player, string $key, $value,  bool $monthly = false): bool {
-		$stmt = $this->mysql->prepare("UPDATE " . ($monthly ? self::TABLE_MONTHLY : self::TABLE_ALLTIME) . " SET " . $key . " = ? WHERE player = ?");
+	public function updateStatistic(string $player, string $key, $value, bool $monthly = false): bool {
+		$stmt = $this->mysql->prepare("UPDATE " . ($monthly ? self::TABLE_MONTHLY : self::TABLE_ALLTIME) . " SET `" . $key . "` = ? WHERE player = ?");
 		$stmt->bind_param((is_numeric($value) ? "i" : "s") . "s", $value, $player);
+		return $stmt->execute();
+	}
+	
+	/**
+	 * Update a statistic key monthly / alltime
+	 *
+	 * @api
+	 *
+	 * @param string $player
+	 * @param array $statistics
+	 * @param bool $monthly
+	 *
+	 * @return bool
+	 */
+	public function updateStatistics(string $player, array $statistics, bool $monthly = false): bool {
+		$keys = implode(", ", array_map(function ($k): string {
+			return "`" . $k . "` = ?";
+		}, array_keys($statistics)));
+		$values = array_merge(array_values($statistics), [$player]);
+		$stmt = $this->mysql->prepare("UPDATE " . ($monthly ? self::TABLE_MONTHLY : self::TABLE_ALLTIME) . " SET " . $keys . " WHERE player = ?");
+		$stmt->bind_param(implode("", array_map(function ($key): string {
+			return (is_numeric($key) ? "i" : "s");
+		}, $values)), ...$values);
 		return $stmt->execute();
 	}
 	

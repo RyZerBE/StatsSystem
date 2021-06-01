@@ -4,8 +4,8 @@ namespace HimmelKreis4865\StatsSystem\utils;
 
 use HimmelKreis4865\StatsSystem\provider\ProviderUtils;
 use stdClass;
-use Thread;
-use function var_dump;
+use function serialize;
+use function unserialize;
 
 class AsyncUtils {
 	/**
@@ -18,7 +18,6 @@ class AsyncUtils {
 	 */
 	public static function getStatistics(string $player, callable $result): void {
 		AsyncExecutor::execute(function (stdClass $class) {
-			var_dump(Thread::getCurrentThreadId());
 			return ProviderUtils::getStatistics($class->player);
 		}, $result, ["player" => $player]);
 	}
@@ -51,5 +50,36 @@ class AsyncUtils {
 		AsyncExecutor::execute(function (stdClass $class) {
 			ProviderUtils::resetStatistics($class->player);
 		}, null, ["player" => $player]);
+	}
+	
+	/**
+	 * Updates a statistic for a player
+	 *
+	 * @api
+	 *
+	 * @param string $player
+	 * @param string $statistic
+	 * @param $value
+	 * @param bool $monthly
+	 */
+	public static function updateStatistic(string $player, string $statistic, $value, bool $monthly = false): void {
+		AsyncExecutor::execute(function (stdClass $class) {
+			ProviderUtils::updateStatistic($class->player, $class->statistic, $class->value, $class->monthly);
+		}, null, ["player" => $player, "statistic" => $statistic, "value" => $value, "monthly" => $monthly]);
+	}
+	
+	/**
+	 * Updates multiple statistics for a player
+	 *
+	 * @api
+	 *
+	 * @param string $player
+	 * @param array $statistics [database_key => new_value]
+	 * @param bool $monthly
+	 */
+	public static function updateStatistics(string $player, array $statistics, bool $monthly = false): void {
+		AsyncExecutor::execute(function (stdClass $class) {
+			ProviderUtils::updateStatistics($class->player, unserialize($class->statistics), $class->monthly);
+		}, null, ["player" => $player, "statistics" => serialize($statistics), "monthly" => $monthly]);
 	}
 }

@@ -6,7 +6,6 @@ use HimmelKreis4865\StatsSystem\utils\InstantiableTrait;
 use pocketmine\network\mcpe\protocol\RemoveActorPacket;
 use pocketmine\Player;
 use function array_keys;
-use function var_dump;
 
 final class HologramManager {
 
