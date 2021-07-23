@@ -33,7 +33,7 @@ class HologramProvider {
 			}
 			
 			foreach ($holograms as $hologram) {
-				new StatsHologram(new Position($hologram["position"]["x"], $hologram["position"]["y"], $hologram["position"]["z"], $level), $hologram["type"], $hologram["monthly"], $hologram["sortOrder"]);
+				new StatsHologram(new Position($hologram["position"]["x"], $hologram["position"]["y"], $hologram["position"]["z"], $level), $hologram["category"], $hologram["statistic"], $hologram["sortOrder"], @$hologram["title"]);
 			}
 		}
 	}

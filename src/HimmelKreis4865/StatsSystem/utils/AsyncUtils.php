@@ -4,22 +4,24 @@ namespace HimmelKreis4865\StatsSystem\utils;
 
 use HimmelKreis4865\StatsSystem\provider\ProviderUtils;
 use stdClass;
-use function serialize;
 use function unserialize;
+use function serialize;
 
-class AsyncUtils {
+final class AsyncUtils {
+	
 	/**
 	 * Returns an array with all statistics of a certain player async
 	 *
 	 * @api
 	 *
 	 * @param string $player
+	 * @param string $category
 	 * @param callable $result
 	 */
-	public static function getStatistics(string $player, callable $result): void {
+	public static function getStatistics(string $player, string $category, callable $result): void {
 		AsyncExecutor::execute(function (stdClass $class) {
-			return ProviderUtils::getStatistics($class->player);
-		}, $result, ["player" => $player]);
+			return ProviderUtils::getStatistics($class->player, $class->category);
+		}, $result, ["player" => $player, ["category" => $category]]);
 	}
 	
 	/**
@@ -28,15 +30,15 @@ class AsyncUtils {
 	 * @api
 	 *
 	 * @param string $category
+	 * @param string $statistic
 	 * @param callable $result
-	 * @param bool $monthly
 	 * @param int $limit
 	 * @param string $sortOrder
 	 */
-	public static function getTopPlayersByCategory(string $category, callable $result, bool $monthly = false, int $limit = 10, string $sortOrder = "DESC"): void {
+	public static function getTopPlayersByStatistic(string $category, string $statistic, callable $result, int $limit = 10, string $sortOrder = "DESC"): void {
 		AsyncExecutor::execute(function (stdClass $class) {
-			return ProviderUtils::getTopPlayersByCategory($class->player, $class->monthly, $class->limit, $class->sortOrder);
-		}, $result, ["category" => $category, "monthly" => $monthly, "limit" => $limit, "sortOrder" => $sortOrder]);
+			return ProviderUtils::getTopPlayersByStatistic($class->category, $class->statistic, $class->limit, $class->sortOrder);
+		}, $result, ["category" => $category, "statistic" => $statistic, "limit" => $limit, "sortOrder" => $sortOrder]);
 	}
 	
 	/**
@@ -45,11 +47,32 @@ class AsyncUtils {
 	 * @api
 	 *
 	 * @param string $player
+	 * @param string $category
+	 * @param callable|null $result
 	 */
-	public static function resetStatistics(string $player): void {
+	public static function resetStatistics(string $player, string $category, callable $result = null): void {
 		AsyncExecutor::execute(function (stdClass $class) {
-			ProviderUtils::resetStatistics($class->player);
-		}, null, ["player" => $player]);
+			return ProviderUtils::resetStatistics($class->player, $class->category);
+		}, $result, ["player" => $player, "category" => $category]);
+	}
+	
+	/**
+	 * Resets all statistics of a player
+	 *
+	 * @api
+	 *
+	 * @param string $player
+	 * @param callable|null $result
+	 *
+	 * @return void
+	 */
+	public static function resetAllStatistics(string $player, callable $result = null): void {
+		AsyncExecutor::execute(function (stdClass $class) {
+			foreach (ProviderUtils::getCategories() as $category) {
+				ProviderUtils::resetStatistics($class->player, $category);
+			}
+			return true;
+		}, $result, ["player" => $player]);
 	}
 	
 	/**
@@ -58,14 +81,32 @@ class AsyncUtils {
 	 * @api
 	 *
 	 * @param string $player
+	 * @param string $category
 	 * @param string $statistic
-	 * @param $value
-	 * @param bool $monthly
+	 * @param scalar $value
+	 * @param callable|null $result
 	 */
-	public static function updateStatistic(string $player, string $statistic, $value, bool $monthly = false): void {
+	public static function updateStatistic(string $player, string $category, string $statistic, $value, callable $result = null): void {
 		AsyncExecutor::execute(function (stdClass $class) {
-			ProviderUtils::updateStatistic($class->player, $class->statistic, $class->value, $class->monthly);
-		}, null, ["player" => $player, "statistic" => $statistic, "value" => $value, "monthly" => $monthly]);
+			return ProviderUtils::updateStatistic($class->player, $class->category, $class->statistic, $class->value);
+		}, $result, ["player" => $player, "category" => $category, "statistic" => $statistic, "value" => $value]);
+	}
+	
+	/**
+	 * Adds a specific number to a statistic of a player e.g elo (50 appended) will increase 50 steps
+	 *
+	 * @api
+	 *
+	 * @param string $player
+	 * @param string $category
+	 * @param string $statistic
+	 * @param int $count
+	 * @param callable|null $result
+	 */
+	public static function appendStatistic(string $player, string $category, string $statistic, int $count, callable $result = null): void {
+		AsyncExecutor::execute(function (stdClass $class) {
+			return ProviderUtils::appendStatistic($class->player, $class->category, $class->statistic, $class->count);
+		}, $result, ["player" => $player, "category" => $category, "statistic" => $statistic, "count" => $count]);
 	}
 	
 	/**
@@ -74,12 +115,32 @@ class AsyncUtils {
 	 * @api
 	 *
 	 * @param string $player
-	 * @param array $statistics [database_key => new_value]
-	 * @param bool $monthly
+	 * @param array $statistics [category => [key => value, ...], ...]]
+	 * @param callable|null $result
 	 */
-	public static function updateStatistics(string $player, array $statistics, bool $monthly = false): void {
+	public static function updateStatistics(string $player, array $statistics, callable $result = null): void {
 		AsyncExecutor::execute(function (stdClass $class) {
-			ProviderUtils::updateStatistics($class->player, unserialize($class->statistics), $class->monthly);
-		}, null, ["player" => $player, "statistics" => serialize($statistics), "monthly" => $monthly]);
+			return ProviderUtils::updateStatistics($class->player, unserialize($class->statistics));
+		}, $result, ["player" => $player, "statistics" => serialize($statistics)]);
+	}
+	
+	/**
+	 * Returns an array with all statistics of a player
+	 *
+	 * @api
+	 *
+	 * @param string $player
+	 * @param callable $result function (array[category => [key => value, ...]] $statistics): void
+	 *
+	 * @return void
+	 */
+	public static function getAllStatistics(string $player, callable $result): void {
+		AsyncExecutor::execute(function (stdClass $class) {
+			$statistics = [];
+			foreach (ProviderUtils::getCategories() as $category) {
+				$statistics[$category] = ProviderUtils::getStatistics($class->player, $category);
+			}
+			return Utils::filterNullables($statistics);
+		}, $result, ["player" => $player]);
 	}
 }

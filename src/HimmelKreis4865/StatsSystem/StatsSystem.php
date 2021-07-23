@@ -4,7 +4,6 @@ namespace HimmelKreis4865\StatsSystem;
 
 use HimmelKreis4865\StatsSystem\commands\StatsCommand;
 use HimmelKreis4865\StatsSystem\provider\HologramProvider;
-use HimmelKreis4865\StatsSystem\provider\MySQLProvider;
 use HimmelKreis4865\StatsSystem\tasks\StatsRefreshTask;
 use pocketmine\plugin\PluginBase;
 
@@ -12,15 +11,8 @@ class StatsSystem extends PluginBase {
 	
 	public const PREFIX = "§8[§6StatsSystem§8] §7";
 	
-	public const ALLTIME_PREFIX = "a_";
-	
 	public const ADMINISTRATIVE_PERMISSION = "stats.admin";
 	
-	/**
-	 * the database requires the tables
-	 * @link MySQLProvider::TABLE_ALLTIME and
-	 * @link MySQLProvider::TABLE_MONTHLY
-	 */
 	public const MYSQL_CREDENTIALS = [ "127.0.0.1", "username", "password", "database" ];
 	
 	/**

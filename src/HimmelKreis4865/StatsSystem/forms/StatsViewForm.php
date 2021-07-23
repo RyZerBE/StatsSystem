@@ -22,35 +22,48 @@ use function substr;
 use const ARRAY_FILTER_USE_KEY;
 
 class StatsViewForm extends MenuForm {
-	
-	public function __construct(Player $player, StackedPlayerStatistics $statistics) {
-		
+	/**
+	 * StatsViewForm constructor.
+	 *
+	 * @param Player $player
+	 * @param StackedPlayerStatistics[] $categories
+	 */
+	public function __construct(Player $player, array $categories) {
 		// todo: replace the value with the real language
 		$lang = null;
-		$array = array_filter((array) $statistics, function (string $k): bool {
-			return in_array($k[0], str_split("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"));
-		}, ARRAY_FILTER_USE_KEY);
-
-		array_walk($array, function (&$v, $k) use ($lang) {
-			// anything between /**/ is raw code - the value in the language file should be smth like "beds" => "Destroyed beds"   [array key is the database column]
-			$v = $k . "::" . TextFormat::GOLD . /* $lang->translate("StatsSystem.keys." . $k) ??*/ $k . ": " . TextFormat::GRAY . $v;
-		});
 		
-		$content = "§l§eMonthly stats§r\n" .
-				implode("\n", array_map(function ($k): string {
-					return explode("::", $k)[1];
-				}, array_filter(array_values($array), function($k): bool {
-			return (substr(explode("::", $k)[0], 0, strlen(StatsSystem::ALLTIME_PREFIX)) !== StatsSystem::ALLTIME_PREFIX);
-		})));
+		/** @var StackedPlayerStatistics $monthly */
+		$monthly = [];
+		/** @var StackedPlayerStatistics $alltime */
+		$alltime = [];
 		
-		$content .= "\n\n§l§eAlltime stats§r\n" .
-			implode("\n", array_map(function ($k): string {
-				return str_replace(StatsSystem::ALLTIME_PREFIX, "", explode("::", $k)[1]);
-			}, array_filter(array_values($array), function($k): bool {
-				return (substr(explode("::", $k)[0], 0, strlen(StatsSystem::ALLTIME_PREFIX)) === StatsSystem::ALLTIME_PREFIX);
-			})));
+		$owner = null;
 		
-		parent::__construct($statistics->getOwner() . "'s statistics", $content, [ new MenuOption("Back") ], function (Player $player, int $selectedOption): void {
+		foreach ($categories as $name => $statistics) {
+			$owner = $statistics->getOwner();
+			foreach ($statistics as $k => $v) {
+				if (substr($k, 0, 2) === "m_") {
+					$monthly[$name][substr($k, 2)] = $v;
+				} else {
+					$alltime[$name][$k] = $v;
+				}
+			}
+		}
+		
+		$content = "§l§6Monthly stats§r";
+		foreach ($monthly as $category => $stats) {
+			$obj = (array) $stats;
+			array_walk($obj, function (&$v, $k): void { $v = $k . ": §7" . $v; });
+			$content .= "\n\n§6$category:\n §7» §b" . implode("\n §7» §b", $obj);
+		}
+		$content .= "\n\n§l§6Alltime stats§r";
+		foreach ($alltime as $category => $stats) {
+			$obj = (array) $stats;
+			array_walk($obj, function (&$v, $k): void { $v = $k . ": §7" . $v; });
+			$content .= "\n\n§6$category:\n §7» §b" . implode("\n §7» §b", $obj);
+		}
+		
+		parent::__construct($owner . "'s statistics", $content, [ new MenuOption("Back") ], function (Player $player, int $selectedOption): void {
 			$player->sendForm(new StatsBaseForm($player));
 		});
 	}

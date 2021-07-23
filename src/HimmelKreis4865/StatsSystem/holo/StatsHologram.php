@@ -10,37 +10,35 @@ use function array_merge;
 use function implode;
 
 class StatsHologram extends Hologram {
- 
-	/** @var string $type */
-    protected $type;
-    
-    /** @var bool $monthly */
-    protected $monthly;
     
     /** @var string $sortOrder */
     protected $sortOrder;
+    
+    /** @var string $category */
+    protected $category;
+    
+    /** @var string $statistic */
+    protected $statistic;
+    
+    /** @var string|null $title */
+    protected $customTitle;
 	
 	/**
 	 * StatsHologram constructor.
 	 *
 	 * @param Position $position
-	 * @param string $type
-	 * @param bool $monthly
+	 * @param string $category
+	 * @param string $statistic
 	 * @param string $sortOrder
+	 * @param string|null $title
 	 */
-    public function __construct(Position $position, string $type, bool $monthly = false, string $sortOrder = "DESC") {
-        $this->type = $type;
+    public function __construct(Position $position, string $category, string $statistic, string $sortOrder = "DESC", string $title = null) {
+        $this->category = $category;
+        $this->statistic = $statistic;
         $this->sortOrder = $sortOrder;
-        $this->monthly = $monthly;
+        $this->customTitle = $title;
 		parent::__construct($position, "", "");
 		HologramManager::getInstance()->registerHologram($this);
-	}
-	
-	/**
-	 * @return bool
-	 */
-	public function isMonthly(): bool {
-		return $this->monthly;
 	}
 	
 	/**
@@ -53,8 +51,15 @@ class StatsHologram extends Hologram {
 	/**
 	 * @return string
 	 */
-	public function getType(): string {
-		return $this->type;
+	public function getStatistic(): string {
+		return $this->statistic;
+	}
+	
+	/**
+	 * @return string
+	 */
+	public function getCategory(): string {
+		return $this->category;
 	}
 	
 	/**
@@ -66,7 +71,7 @@ class StatsHologram extends Hologram {
 	 */
 	public function parsePlayers(array $players): void {
     	$k = 0;
-		$this->setText(implode("\n", array_merge(["§c§l" . $this->getType() . " Leaderboard"], ["\n"], array_map(function (PlayerStatistic $statistic) use (&$k): string {
+		$this->setText(implode("\n", array_merge([($this->customTitle ?? "§c§l" . $this->getStatistic() . " Leaderboard")], ["\n"], array_map(function (PlayerStatistic $statistic) use (&$k): string {
 			return TextFormat::GOLD . ++$k . TextFormat::DARK_GRAY . ". " . TextFormat::GOLD . $statistic->getPlayer() . TextFormat::DARK_GRAY . ": " . TextFormat::GOLD . $statistic->getStatsCount();
 		}, $players))));
 	}
@@ -77,8 +82,9 @@ class StatsHologram extends Hologram {
 	public function asArray(): array {
 		return [
 			"levelName" => $this->getLevelName(),
-			"type" => $this->getType(),
-			"monthly" => $this->isMonthly(),
+			"statistic" => $this->getStatistic(),
+			"category" => $this->getCategory(),
+			"title" => $this->customTitle,
 			"sortOrder" => $this->getSortOrder(),
 			"position" => ["x" => $this->getParticle()->getFloorX(), "y" => $this->getParticle()->getFloorY(), "z" => $this->getParticle()->getFloorZ()]
 		];

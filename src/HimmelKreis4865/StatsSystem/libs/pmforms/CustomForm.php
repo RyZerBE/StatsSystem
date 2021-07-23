@@ -23,7 +23,7 @@ declare(strict_types=1);
 
 namespace HimmelKreis4865\StatsSystem\libs\pmforms;
 
-use dktapps\pmforms\element\CustomFormElement;
+use HimmelKreis4865\StatsSystem\libs\pmforms\element\CustomFormElement;
 use pocketmine\form\FormValidationException;
 use pocketmine\Player;
 use pocketmine\utils\Utils;

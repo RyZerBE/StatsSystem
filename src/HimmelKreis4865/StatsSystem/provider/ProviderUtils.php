@@ -13,18 +13,40 @@ final class ProviderUtils {
 	 * @api
 	 *
 	 * @param string $category
-	 * @param bool $monthly
+	 * @param string $statistic
 	 * @param int $limit
 	 * @param string $sortOrder
 	 *
 	 * @return PlayerStatistic[]
 	 */
-	public static function getTopPlayersByCategory(string $category, bool $monthly = false, int $limit = 10, string $sortOrder = "DESC"): array {
+	public static function getTopPlayersByStatistic(string $category, string $statistic, int $limit = 10, string $sortOrder = "DESC"): array {
 		$mysql = new MySQLProvider();
 		
-		$result = $mysql->getTopEntriesByColumn($category, $monthly, $limit, $sortOrder);
+		$result = $mysql->getTopEntriesByColumn($category, $statistic, $limit, $sortOrder);
 		$mysql->close();
 		
+		return $result;
+	}
+	
+	/**
+	 * Creates a new table with the given category name and statistics
+	 *
+	 *
+	 *
+	 * @api
+	 *
+	 * @param string $name
+	 * @param string[] $statistics [name => type, ...]
+	 * @see MySQLProvider::ALLOWED_TYPES for a list of all passable types
+	 * Do not add monthly types and player key here, they will be added automatically created with m_ + name
+	 *
+	 * @return bool
+	 */
+	public static function createCategory(string $name, array $statistics): bool {
+		$mysql = new MySQLProvider();
+		
+		$result = $mysql->createCategory($name, $statistics);
+		$mysql->close();
 		return $result;
 	}
 	
@@ -34,13 +56,14 @@ final class ProviderUtils {
 	 * @api
 	 *
 	 * @param string $player
+	 * @param string $category
 	 *
 	 * @return StackedPlayerStatistics|null
 	 */
-	public static function getStatistics(string $player): ?StackedPlayerStatistics {
+	public static function getStatistics(string $player, string $category): ?StackedPlayerStatistics {
 		$mysql = new MySQLProvider();
 		
-		$result = $mysql->getStatistics($player);
+		$result = $mysql->getStatistics($player, $category);
 		$mysql->close();
 		
 		return $result;
@@ -52,12 +75,16 @@ final class ProviderUtils {
 	 * @api
 	 *
 	 * @param string $player
+	 * @param string $category
+	 *
+	 * @return bool
 	 */
-	public static function resetStatistics(string $player): void {
+	public static function resetStatistics(string $player, string $category): bool {
 		$mysql = new MySQLProvider();
 		
-		$mysql->removeEntries($player);
+		$result = $mysql->removeEntries($player, $category);
 		$mysql->close();
+		return $result;
 	}
 	
 	/**
@@ -66,15 +93,40 @@ final class ProviderUtils {
 	 * @api
 	 *
 	 * @param string $player
+	 * @param string $category
 	 * @param string $statistic
 	 * @param $value
-	 * @param bool $monthly
+	 *
+	 * @return bool
 	 */
-	public static function updateStatistic(string $player, string $statistic, $value, bool $monthly = false): void {
+	public static function updateStatistic(string $player, string $category, string $statistic, $value): bool {
 		$mysql = new MySQLProvider();
 		
-		$mysql->updateStatistic($player, $statistic, $value, $monthly);
+		$result = $mysql->updateStatistic($player, $category, $statistic, $value);
 		$mysql->close();
+		
+		return $result;
+	}
+	
+	/**
+	 * Adds a specific number to a statistic of a player e.g elo (50 appended) will increase 50 steps
+	 *
+	 * @api
+	 *
+	 * @param string $player
+	 * @param string $category
+	 * @param string $statistic
+	 * @param int $count
+	 *
+	 * @return bool
+	 */
+	public static function appendStatistic(string $player, string $category, string $statistic, int $count): bool {
+		$mysql = new MySQLProvider();
+		
+		$result = $mysql->appendStatistic($player, $category, $statistic, $count);
+		$mysql->close();
+		
+		return $result;
 	}
 	
 	/**
@@ -83,13 +135,31 @@ final class ProviderUtils {
 	 * @api
 	 *
 	 * @param string $player
-	 * @param array $statistics [database_key => new_value]
-	 * @param bool $monthly
+	 * @param array $statistics [category => [key => value, ...], ...]]
+	 *
+	 * @return bool
 	 */
-	public static function updateStatistics(string $player, array $statistics, bool $monthly = false): void {
+	public static function updateStatistics(string $player, array $statistics): bool {
 		$mysql = new MySQLProvider();
 		
-		$mysql->updateStatistics($player, $statistics, $monthly);
+		$result = $mysql->updateStatistics($player, $statistics);
 		$mysql->close();
+		
+		return $result;
+	}
+	
+	/**
+	 * Returns an array with all categories registered
+	 *
+	 * @api
+	 *
+	 * @return string[]
+	 */
+	public static function getCategories(): array {
+		$mysql = new MySQLProvider();
+		
+		$result = $mysql->getCategories();
+		$mysql->close();
+		return $result;
 	}
 }

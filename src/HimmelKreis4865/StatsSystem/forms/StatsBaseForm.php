@@ -8,6 +8,7 @@ use HimmelKreis4865\StatsSystem\StatsSystem;
 use HimmelKreis4865\StatsSystem\utils\AsyncUtils;
 use HimmelKreis4865\StatsSystem\utils\StackedPlayerStatistics;
 use pocketmine\Player;
+use function count;
 
 class StatsBaseForm extends MenuForm {
 
@@ -15,11 +16,11 @@ class StatsBaseForm extends MenuForm {
 		parent::__construct("Statistics", "", [ new MenuOption("Your statistics"), new MenuOption("Search player") ], function (Player $player, int $selectedOption): void {
 			switch ($selectedOption) {
 				case 0:
-					AsyncUtils::getStatistics($player->getName(), function (?StackedPlayerStatistics $statistics) use ($player) : void {
+					AsyncUtils::getAllStatistics($player->getName(), function (array $statistics) use ($player) : void {
 						if ($player === null or !$player->isConnected()) return;
 						
-						if ($statistics === null) {
-							$player->sendMessage(StatsSystem::PREFIX . "You don't have any statistics yet!");
+						if (!count($statistics)) {
+							$player->sendMessage(StatsSystem::PREFIX . "You don't have any statistics yet.");
 							return;
 						}
 						$player->sendForm(new StatsViewForm($player, $statistics));

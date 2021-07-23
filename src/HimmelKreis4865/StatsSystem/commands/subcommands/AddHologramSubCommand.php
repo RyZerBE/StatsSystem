@@ -18,11 +18,11 @@ class AddHologramSubCommand extends SubCommand {
 	public function execute(CommandSender $sender, array $args) {
 		if (!$sender instanceof Player) return;
 		if (!isset($args[0])) {
-			$sender->sendMessage(StatsSystem::PREFIX . "Usage: §f/stats addhologram <type: string> [monthly: bool] [sortOrder: string (ASC|DESC)]");
+			$sender->sendMessage(StatsSystem::PREFIX . "Usage: §f/stats addhologram <category: string> <statistic: string> [sortOrder: string (ASC|DESC)] [title: string]");
 			return;
 		}
 		
-		$hologram = new StatsHologram($sender, $args[0], ($args[1] ?? "false" === "true"), (in_array(strtoupper($args[2] ?? ""), ["ASC", "DESC"]) ? strtoupper($args[2]) : "DESC"));
+		$hologram = new StatsHologram($sender, $args[0], $args[1], (in_array(strtoupper($args[2] ?? ""), ["ASC", "DESC"]) ? strtoupper($args[2]) : "DESC"), @$args[3]);
 		foreach ($sender->getLevelNonNull()->getPlayers() as $player) {
 			$hologram->spawnTo($player);
 		}
