@@ -32,7 +32,7 @@ class MySQLProvider {
 	public $mysql;
 	
 	public function __construct() {
-		$this->mysql = mysqli_connect(...StatsSystem::MYSQL_CREDENTIALS);
+		$this->mysql = mysqli_connect(...\baubolp\core\provider\MySQLProvider::getMySQLData());
 		
 		if (!$this->mysql)
 			throw new RuntimeException("Failed to connect to mysql: " . $this->mysql->connect_error);
@@ -46,7 +46,7 @@ class MySQLProvider {
 	 * @return string[]
 	 */
 	public function getCategories(): array {
-		$q = $this->mysql->query("select table_name from information_schema.tables where TABLE_SCHEMA='" . StatsSystem::MYSQL_CREDENTIALS[3] . "';");
+		$q = $this->mysql->query("select table_name from information_schema.tables where TABLE_SCHEMA='" . StatsSystem::DATABASE . "';");
 		$tables = [];
 		while($table = $q->fetch_array(MYSQLI_ASSOC)) {
 			if (isset($table["table_name"])) $tables[] = $table["table_name"];
@@ -208,7 +208,7 @@ class MySQLProvider {
 			if ($addMonthly) $statistics[$stat_name] = "$stat_name " . strtoupper($type) . " NOT NULL";
 		}
 		$statistics = array_merge(["player VARCHAR(16) PRIMARY KEY"], $statistics);
-		return boolval($this->mysql->query("CREATE TABLE IF NOT EXISTS `" . StatsSystem::MYSQL_CREDENTIALS[3] . "`." . $name . "(" . implode(", ", $statistics) . ") ENGINE = InnoDB;"));
+		return boolval($this->mysql->query("CREATE TABLE IF NOT EXISTS `" . StatsSystem::DATABASE . "`." . $name . "(" . implode(", ", $statistics) . ") ENGINE = InnoDB;"));
 	}
 	
 	public function close(): void {

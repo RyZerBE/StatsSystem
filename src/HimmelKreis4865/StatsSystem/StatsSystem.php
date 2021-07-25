@@ -13,7 +13,7 @@ class StatsSystem extends PluginBase {
 	
 	public const ADMINISTRATIVE_PERMISSION = "stats.admin";
 	
-	public const MYSQL_CREDENTIALS = [ "127.0.0.1", "username", "password", "database" ];
+	public const DATABASE = "Statistics";
 	
 	/**
 	 * Refresh rate of leaderboards (in ticks)
