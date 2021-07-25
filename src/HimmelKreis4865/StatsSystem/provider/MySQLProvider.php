@@ -8,7 +8,6 @@ use HimmelKreis4865\StatsSystem\utils\StackedPlayerStatistics;
 use InvalidArgumentException;
 use mysqli;
 use RuntimeException;
-use function array_fill;
 use function array_keys;
 use function array_map;
 use function array_merge;
@@ -32,7 +31,8 @@ class MySQLProvider {
 	public $mysql;
 	
 	public function __construct() {
-		$this->mysql = mysqli_connect(...\baubolp\core\provider\MySQLProvider::getMySQLData());
+	    $mysqlData = \baubolp\core\provider\MySQLProvider::getMySQLData();
+		$this->mysql = mysqli_connect($mysqlData["host"] . ":3306", $mysqlData["user"], $mysqlData["password"], StatsSystem::DATABASE);
 		
 		if (!$this->mysql)
 			throw new RuntimeException("Failed to connect to mysql: " . $this->mysql->connect_error);
