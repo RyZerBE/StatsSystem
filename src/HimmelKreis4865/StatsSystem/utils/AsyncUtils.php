@@ -21,7 +21,7 @@ final class AsyncUtils {
 	public static function getStatistics(string $player, string $category, callable $result): void {
 		AsyncExecutor::execute(function (stdClass $class) {
 			return ProviderUtils::getStatistics($class->player, $class->category);
-		}, $result, ["player" => $player, ["category" => $category]]);
+		}, $result, ["player" => $player, "category" => $category]);
 	}
 	
 	/**
