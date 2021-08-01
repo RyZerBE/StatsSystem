@@ -137,9 +137,9 @@ final class AsyncUtils {
 	public static function getAllStatistics(string $player, callable $result): void {
 		AsyncExecutor::execute(function (stdClass $class) {
 			$statistics = [];
-			foreach (ProviderUtils::getCategories() as $category) {
-				$statistics[$category] = ProviderUtils::getStatistics($class->player, $category);
-			}
+			foreach (ProviderUtils::getCategories() as $category)
+			    $statistics[$category] = ProviderUtils::getStatistics($class->player, $category);
+
 			return Utils::filterNullables($statistics);
 		}, $result, ["player" => $player]);
 	}

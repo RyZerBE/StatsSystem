@@ -17,7 +17,7 @@ class AddHologramSubCommand extends SubCommand {
 	
 	public function execute(CommandSender $sender, array $args) {
 		if (!$sender instanceof Player) return;
-		if (!isset($args[0])) {
+		if (!isset($args[0]) || !isset($args[1])) {
 			$sender->sendMessage(StatsSystem::PREFIX . "Usage: §f/stats addhologram <category: string> <statistic: string> [sortOrder: string (ASC|DESC)] [title: string]");
 			return;
 		}

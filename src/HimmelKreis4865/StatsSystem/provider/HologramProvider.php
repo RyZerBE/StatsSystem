@@ -15,7 +15,7 @@ class HologramProvider {
 	protected $file;
 	
 	public function __construct() {
-		$this->file = new Config(StatsSystem::getInstance()->getDataFolder() . "holograms.yml");
+		$this->file = new Config("/root/RyzerCloud/data/stats_holograms.yml");
 	}
 	
 	/**

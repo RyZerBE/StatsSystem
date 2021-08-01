@@ -48,8 +48,8 @@ class MySQLProvider {
 	public function getCategories(): array {
 		$q = $this->mysql->query("select table_name from information_schema.tables where TABLE_SCHEMA='" . StatsSystem::DATABASE . "';");
 		$tables = [];
-		while($table = $q->fetch_array(MYSQLI_ASSOC)) {
-			if (isset($table["table_name"])) $tables[] = $table["table_name"];
+		while($tableResult = $q->fetch_array(MYSQLI_ASSOC)) {
+		    foreach ($tableResult as $table) $tables[] = $table;
 		}
 		return $tables;
 	}

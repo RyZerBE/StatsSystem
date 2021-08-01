@@ -71,8 +71,8 @@ class StatsHologram extends Hologram {
 	 */
 	public function parsePlayers(array $players): void {
     	$k = 0;
-		$this->setText(implode("\n", array_merge([($this->customTitle ?? "§c§l" . $this->getStatistic() . " Leaderboard")], ["\n"], array_map(function (PlayerStatistic $statistic) use (&$k): string {
-			return TextFormat::GOLD . ++$k . TextFormat::DARK_GRAY . ". " . TextFormat::GOLD . $statistic->getPlayer() . TextFormat::DARK_GRAY . ": " . TextFormat::GOLD . $statistic->getStatsCount();
+		$this->setText(implode("\n", array_merge([($this->customTitle ?? "§b§l" . $this->getStatistic() . " §c§lLeaderboard\n")], ["\n"], array_map(function (PlayerStatistic $statistic) use (&$k): string {
+			return TextFormat::RED . ++$k . TextFormat::DARK_GRAY . ". " . TextFormat::GOLD . $statistic->getPlayer() . TextFormat::DARK_GRAY . ": " . TextFormat::AQUA . $statistic->getStatsCount();
 		}, $players))));
 	}
 	
