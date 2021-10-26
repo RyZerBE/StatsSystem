@@ -27,8 +27,7 @@ class StatsResultForm extends StatsForm {
         $senderName = $extraData["sender"];
         $category = $extraData["category"];
         AsyncExecutor::submitMySQLAsyncTask(StatsSystem::DATABASE, function(mysqli $mysqli) use ($playerName, $category): ?array{
-            $statistics = StatsProvider::getStatistics($mysqli, $playerName, $category);
-            return $statistics;
+            return StatsProvider::getStatistics($mysqli, $playerName, $category);
         }, function(Server $server, ?array $statistics) use ($playerName, $category, $senderName){
             $player = $server->getPlayerExact($senderName);
             if($player === null) return;
@@ -39,7 +38,7 @@ class StatsResultForm extends StatsForm {
                 SelectPlayerForm::open($player);
             });
             $form->setTitle(TextFormat::GOLD.$category);
-            $form->addButton(TextFormat::RED."Back", -1, "", "back");
+            $form->addButton(TextFormat::RED."🡰 Back", -1, "", "back");
             if($statistics === null) {
                 $form->setContent(LanguageProvider::getMessageContainer("no-stats", $playerName, ["#game" => $category]));
                 $form->sendToPlayer($player);

@@ -42,12 +42,13 @@ class CreateStatsHoloForm extends StatsForm {
                     return StatsProvider::getColumnsOfCategory($mysqli, $data);
                 }, function(Server $server, array $columns) use ($playerName): void{
                     $player = $server->getPlayerExact($playerName);
-                    $limits = [5, 10, 15];
+                    $limits = ["5", "10,", "15"];
                     if($player === null) return;
                     $form = new CustomForm(function(Player $player, $data): void{
                         if($data === null) return;
 
                         //todo: create hologram, cache and save into a config..
+                        //todo: two hologram types -> "Your stats" and "Top {limit} of {column}
                     });
                     $form->setTitle("Create top hologram");
                     $form->addInput(TextFormat::GOLD."Title");
