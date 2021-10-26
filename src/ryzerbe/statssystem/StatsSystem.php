@@ -3,6 +3,7 @@
 namespace ryzerbe\statssystem;
 
 use pocketmine\plugin\PluginBase;
+use ryzerbe\statssystem\command\StatsCommand;
 
 class StatsSystem extends PluginBase {
     public const DATABASE = "Statistics";
@@ -15,5 +16,8 @@ class StatsSystem extends PluginBase {
 
     public function onEnable(): void{
         self::$instance = $this;
+        StatsSystem::getInstance()->getServer()->getCommandMap()->registerAll("statssystem", [
+           new StatsCommand()
+        ]);
     }
 }

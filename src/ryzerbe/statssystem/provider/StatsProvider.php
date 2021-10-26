@@ -11,6 +11,10 @@ use function strtotime;
 
 class StatsProvider {
 
+    /**
+     * @param mysqli $mysqli
+     * @return array
+     */
     public static function getCategories(mysqli $mysqli): array{
         $query = $mysqli->query("SELECT table_name FROM information_schema.tables WHERE TABLE_SCHEMA='" . StatsSystem::DATABASE . "';");
         $tables = [];
@@ -20,6 +24,11 @@ class StatsProvider {
         return $tables;
     }
 
+    /**
+     * @param mysqli $mysqli
+     * @param string $player
+     * @param string $category
+     */
     public static function checkMonthlyStatistic(mysqli $mysqli, string $player, string $category): void {
         $statistics = self::getStatistics($mysqli, $player, $category);
         if($statistics === null || !isset($statistics["date"])) return;
@@ -32,12 +41,26 @@ class StatsProvider {
         }
     }
 
+    /**
+     * @param mysqli $mysqli
+     * @param string $player
+     * @param string $category
+     * @return array|null
+     */
     public static function getStatistics(mysqli $mysqli, string $player, string $category): ?array{
         $query = $mysqli->query("SELECT * FROM " . $category . " WHERE player='$player'");
         if($query->num_rows <= 0) return null;
         return $query->fetch_assoc();
     }
 
+    /**
+     * @param mysqli $mysqli
+     * @param string $category
+     * @param string $column
+     * @param int $limit
+     * @param string $sortOrder
+     * @return array
+     */
     public static function getTopEntriesByColumn(mysqli $mysqli, string $category, string $column, int $limit = 10, string $sortOrder = "DESC"): array{
         if(!($result = $mysqli->query("SELECT `player`, `" . $column . "` FROM " . $category . " ORDER BY " . $column . " " . $sortOrder . " LIMIT 0, " . $limit . ";"))) return [];
         $entries = [];
@@ -52,10 +75,24 @@ class StatsProvider {
         $mysqli->query("INSERT INTO " . $category . " (player, " . $key . ") VALUES ('$player', '$value') ON DUPLICATE KEY UPDATE " . $key . "='$value'");
     }
 
+    /**
+     * @param mysqli $mysqli
+     * @param string $player
+     * @param string $category
+     * @param string $statistic
+     * @param int $count
+     */
     public static function appendStatistic(mysqli $mysqli, string $player, string $category, string $statistic, int $count): void {
         $mysqli->prepare("INSERT INTO " . $category . "(player, `" . $statistic . "`) VALUES ('$player', '$count') ON DUPLICATE KEY UPDATE `" . $statistic . "` = " . $statistic . " + " . $count);
+        //todo: finish prepare statement?
     }
 
+    /**
+     * @param mysqli $mysqli
+     * @param string $name
+     * @param array $statistics
+     * @param array $defaults
+     */
     public static function createCategory(mysqli $mysqli, string $name, array $statistics, array $defaults): void{
         foreach($statistics as $stat_name => $type){
             $addMonthly = true;
