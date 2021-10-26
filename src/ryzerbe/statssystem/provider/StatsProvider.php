@@ -8,6 +8,7 @@ use function date;
 use function implode;
 use function str_starts_with;
 use function strtotime;
+use const MYSQLI_ASSOC;
 
 class StatsProvider {
 
@@ -66,6 +67,20 @@ class StatsProvider {
         $entries = [];
         foreach($result->fetch_all(MYSQLI_ASSOC) as $data) $entries[$data["player"]] = $data[$column];
         return $entries;
+    }
+
+    /**
+     * @param mysqli $mysqli
+     * @param string $category
+     * @return array
+     */
+    public static function getColumnsOfCategory(mysqli $mysqli, string $category): array{
+        $query = $mysqli->query("SELECT Column_name FROM Information_schema.columns WHERE Table_name like '$category'");
+        $columns = [];
+        while($data = $query->fetch_all(MYSQLI_ASSOC)){
+            foreach($data as $column) $columns[] = $column;
+        }
+        return $columns;
     }
 
     /**
