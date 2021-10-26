@@ -20,7 +20,7 @@ class StatsSystem extends PluginBase {
 
     public function onEnable(): void{
         self::$instance = $this;
-        StatsSystem::getInstance()->getServer()->getCommandMap()->registerAll("statssystem", [
+        $this->getServer()->getCommandMap()->registerAll("statssystem", [
            new StatsCommand()
         ]);
     }

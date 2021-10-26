@@ -9,9 +9,7 @@ use pocketmine\Player;
 use pocketmine\utils\TextFormat;
 use ryzerbe\statssystem\form\holo\CreateStatsHoloForm;
 use ryzerbe\statssystem\form\SelectPlayerForm;
-use ryzerbe\statssystem\StatsSystem;
 use function count;
-use function in_array;
 
 class StatsCommand extends Command {
 

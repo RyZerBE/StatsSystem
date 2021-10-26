@@ -24,12 +24,13 @@ class StatsResultForm extends StatsForm {
      */
     public static function open(Player $player, array $extraData = []): void{
         $playerName = $extraData["player"];
+        $senderName = $extraData["sender"];
         $category = $extraData["category"];
         AsyncExecutor::submitMySQLAsyncTask(StatsSystem::DATABASE, function(mysqli $mysqli) use ($playerName, $category): ?array{
             $statistics = StatsProvider::getStatistics($mysqli, $playerName, $category);
             return $statistics;
-        }, function(Server $server, ?array $statistics) use ($playerName, $category){
-            $player = $server->getPlayerExact($playerName);
+        }, function(Server $server, ?array $statistics) use ($playerName, $category, $senderName){
+            $player = $server->getPlayerExact($senderName);
             if($player === null) return;
 
             $form = new SimpleForm(function(Player $player, $data): void{

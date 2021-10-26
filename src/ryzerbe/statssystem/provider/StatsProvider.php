@@ -20,7 +20,7 @@ class StatsProvider {
         $query = $mysqli->query("SELECT table_name FROM information_schema.tables WHERE TABLE_SCHEMA='" . StatsSystem::DATABASE . "';");
         $tables = [];
         while($tableResult = $query->fetch_all(MYSQLI_ASSOC)){
-            foreach($tableResult as $table) $tables[] = $table;
+            foreach($tableResult as $table) $tables[] = $table["TABLE_NAME"];
         }
         return $tables;
     }

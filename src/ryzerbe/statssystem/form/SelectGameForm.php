@@ -10,6 +10,7 @@ use pocketmine\Server;
 use pocketmine\utils\TextFormat;
 use ryzerbe\statssystem\provider\StatsProvider;
 use ryzerbe\statssystem\StatsSystem;
+use function var_dump;
 
 class SelectGameForm extends StatsForm {
 
@@ -30,6 +31,7 @@ class SelectGameForm extends StatsForm {
 
 
                 $extraData["category"] = $data;
+                $extraData["sender"] = $player->getName();
                 StatsResultForm::open($player, $extraData);
             });
 
