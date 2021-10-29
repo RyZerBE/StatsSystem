@@ -39,6 +39,7 @@ class StatsAsyncProvider {
      */
     public static function updateStatistic(string $player, string $category, string $key, mixed $value): void{
         AsyncExecutor::submitMySQLAsyncTask(StatsSystem::DATABASE, function(\mysqli $mysqli) use ($player, $category, $key, $value): void{
+            StatsProvider::checkMonthlyStatistic($mysqli, $player, $category);
             StatsProvider::updateStatistic($mysqli, $player, $category, $key, $value);
         });
     }
@@ -51,7 +52,18 @@ class StatsAsyncProvider {
      */
     public static function appendStatistic(string $player, string $category, string $statistic, int $count): void{
         AsyncExecutor::submitMySQLAsyncTask(StatsSystem::DATABASE, function(\mysqli $mysqli) use ($player, $category, $statistic, $count): void{
+            StatsProvider::checkMonthlyStatistic($mysqli, $player, $category);
             StatsProvider::appendStatistic($mysqli, $player, $category, $statistic, $count);
+        });
+    }
+
+    /**
+     * @param string $player
+     * @param string $category
+     */
+    public static function resetStatistics(string $player, string $category): void{
+        AsyncExecutor::submitMySQLAsyncTask(StatsSystem::DATABASE, function(\mysqli $mysqli) use ($player, $category): void{
+            StatsProvider::resetStatistics($mysqli, $player, $category);
         });
     }
 
@@ -62,6 +74,7 @@ class StatsAsyncProvider {
      */
     public static function getStatistics(string $player, string $category, Closure $function): void{
         AsyncExecutor::submitMySQLAsyncTask(StatsSystem::DATABASE, function(\mysqli $mysqli) use ($player, $category): ?array{
+            StatsProvider::checkMonthlyStatistic($mysqli, $player, $category);
             return StatsProvider::getStatistics($mysqli, $player, $category);
         }, function(Server $server, ?array $stats) use ($function): void{
             $function($stats);

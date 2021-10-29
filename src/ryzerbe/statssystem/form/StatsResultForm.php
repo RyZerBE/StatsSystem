@@ -15,6 +15,7 @@ use function date;
 use function str_starts_with;
 use function substr;
 use function time;
+use function var_dump;
 
 class StatsResultForm extends StatsForm {
 
@@ -38,35 +39,36 @@ class StatsResultForm extends StatsForm {
                 SelectPlayerForm::open($player);
             });
             $form->setTitle(TextFormat::GOLD.$category);
-            $form->addButton(TextFormat::RED."🡰 Back", -1, "", "back");
-            if($statistics === null) {
-                $form->setContent(LanguageProvider::getMessageContainer("no-stats", $playerName, ["#game" => $category]));
+            $form->addButton(TextFormat::RED."🡐 Back", -1, "", "back");
+            if($statistics === null){
+                $form->setContent(LanguageProvider::getMessageContainer("no-stats", $senderName, ["#game" => $category]));
                 $form->sendToPlayer($player);
                 return;
             }
 
             $monthly = []; $alltime = [];
 
-            foreach ($statistics as $k => $v) {
-                if (str_starts_with($k, "m_")) {
+            foreach($statistics as $k => $v){
+                if($k === "date") continue;
+                if($k === "player") continue;
+                if(str_starts_with($k, "m_")){
                     $monthly[substr($k, 2)] = $v;
-                } else {
+                }else{
                     $alltime[$k] = $v;
                 }
             }
 
             $content = "§l§6Monthly stats§r §8(§b".date("F", time())."§8)";
-            foreach ($monthly as $stats) {
-                $obj = (array) $stats;
-                array_walk($obj, function (&$v, $k): void { $v = $k . ": §7" . $v; });
-                $content .= "\n\n§7» §b" . implode("\n §7» §b", $obj);
-            }
+            array_walk($monthly, function(&$v, $k): void{
+                $v = $k.": §7".$v;
+            });
+            $content .= "\n\n§7» §f".implode("\n §7» §b", $monthly);
+
             $content .= "\n\n§l§6Alltime stats§r";
-            foreach ($alltime as $stats) {
-                $obj = (array) $stats;
-                array_walk($obj, function (&$v, $k): void { $v = $k . ": §7" . $v; });
-                $content .= "\n\n§7» §b" . implode("\n §7» §b", $obj);
-            }
+            array_walk($alltime, function(&$v, $k): void{
+                $v = $k.": §7".$v;
+            });
+            $content .= "\n\n§7» §f".implode("\n §7» §b", $alltime);
 
             $form->setContent($content);
             $form->sendToPlayer($player);

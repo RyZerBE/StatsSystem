@@ -63,7 +63,7 @@ class StatsProvider {
      * @return array
      */
     public static function getTopEntriesByColumn(mysqli $mysqli, string $category, string $column, int $limit = 10, string $sortOrder = "DESC"): array{
-        if(!($result = $mysqli->query("SELECT `player`, `" . $column . "` FROM " . $category . " ORDER BY " . $column . " " . $sortOrder . " LIMIT 0, " . $limit . ";"))) return [];
+        if(!($result = $mysqli->query("SELECT `player`, `" . $column . "` FROM " . $category . " ORDER BY " . $column . " " . $sortOrder . " LIMIT " . $limit))) return [];
         $entries = [];
         foreach($result->fetch_all(MYSQLI_ASSOC) as $data) $entries[$data["player"]] = $data[$column];
         return $entries;
@@ -97,9 +97,17 @@ class StatsProvider {
      * @param string $statistic
      * @param int $count
      */
-    public static function appendStatistic(mysqli $mysqli, string $player, string $category, string $statistic, int $count): void {
-        $mysqli->prepare("INSERT INTO " . $category . "(player, `" . $statistic . "`) VALUES ('$player', '$count') ON DUPLICATE KEY UPDATE `" . $statistic . "` = " . $statistic . " + " . $count);
-        //todo: finish prepare statement?
+    public static function appendStatistic(mysqli $mysqli, string $player, string $category, string $statistic, int $count): void{
+        $mysqli->query("INSERT INTO ".$category."(player, `".$statistic."`) VALUES ('$player', '$count') ON DUPLICATE KEY UPDATE `".$statistic."` = ".$statistic." + ".$count);
+    }
+
+    /**
+     * @param mysqli $mysqli
+     * @param string $player
+     * @param string $category
+     */
+    public static function resetStatistics(mysqli $mysqli, string $player, string $category): void{
+        $mysqli->query("DELETE FROM `$category` WHERE player='$player'");
     }
 
     /**
