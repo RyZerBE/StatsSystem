@@ -11,7 +11,7 @@ class HologramUpdateTask extends Task {
      */
     public function onRun(int $currentTick){
         foreach(StatsHologramManager::getInstance()->activeStatsHolograms as $hologram) {
-            if($currentTick % (20 * 30) !== 0 && !$hologram->needUpdate) continue;
+            if($currentTick % (20 * 60) !== 0 && !$hologram->needUpdate) continue;
             $hologram->onUpdate();
         }
     }
