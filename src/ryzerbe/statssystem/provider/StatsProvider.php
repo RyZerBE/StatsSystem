@@ -87,8 +87,10 @@ class StatsProvider {
     /**
      * @param scalar $value
      */
-    public static function updateStatistic(mysqli $mysqli, string $player, string $category, string $key, mixed $value): void{
+    public static function updateStatistic(mysqli $mysqli, string $player, string $category, string $key, mixed $value, bool $monthly = true): void{
         $mysqli->query("INSERT INTO " . $category . " (player, " . $key . ") VALUES ('$player', '$value') ON DUPLICATE KEY UPDATE " . $key . "='$value'");
+        if($monthly) $mysqli->query("INSERT INTO " . $category . " (player, m_" . $key . ") VALUES ('$player', '$value') ON DUPLICATE KEY UPDATE m_" . $key . "='$value'");
+
     }
 
     /**
@@ -97,9 +99,11 @@ class StatsProvider {
      * @param string $category
      * @param string $statistic
      * @param int $count
+     * @param bool $monthly
      */
-    public static function appendStatistic(mysqli $mysqli, string $player, string $category, string $statistic, int $count): void{
+    public static function appendStatistic(mysqli $mysqli, string $player, string $category, string $statistic, int $count, bool $monthly = true): void{
         $mysqli->query("INSERT INTO ".$category."(player, `".$statistic."`) VALUES ('$player', '$count') ON DUPLICATE KEY UPDATE `".$statistic."` = ".$statistic." + ".$count);
+        if($monthly) $mysqli->query("INSERT INTO ".$category."(player, `m_".$statistic."`) VALUES ('$player', '$count') ON DUPLICATE KEY UPDATE `m_".$statistic."` = m_".$statistic." + ".$count);
     }
 
     /**
