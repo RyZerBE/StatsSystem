@@ -46,13 +46,13 @@ class PlayerStatsHologram extends StatsHologram {
             array_walk($monthly, function(&$v, $k): void{
                 $v = $k.": §b".$v;
             });
-            $content .= "\n\n§7» §f".implode("\n §7» §b", $monthly);
+            $content .= "\n\n§7» §f".implode("\n §7» §f", $monthly);
 
             $content .= "\n\n§l§6Alltime stats§r";
             array_walk($alltime, function(&$v, $k): void{
                 $v = $k.": §b".$v;
             });
-            $content .= "\n\n§7» §f".implode("\n §7» §b", $alltime);
+            $content .= "\n\n§7» §f".implode("\n §7» §f", $alltime);
 
             $player = Server::getInstance()->getPlayerExact($playerName);
             if($player === null) return;

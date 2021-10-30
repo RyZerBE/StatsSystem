@@ -7,6 +7,8 @@ use pocketmine\Server;
 use pocketmine\utils\TextFormat;
 use ryzerbe\statssystem\hologram\StatsHologram;
 use ryzerbe\statssystem\provider\StatsAsyncProvider;
+use function array_keys;
+use function array_search;
 use function array_walk;
 use function implode;
 use function in_array;
@@ -29,8 +31,8 @@ class TopEntriesHologram extends StatsHologram {
 
         $hologramId = $this->entityId;
         StatsAsyncProvider::getTopEntriesOfColumn($this->getCategory(), $this->column, function(array $topEntries) use ($title, $displayTo, $hologramId): void{
-            array_walk($topEntries, function(&$v, $k): void{
-                $v = TextFormat::GREEN.$k.TextFormat::DARK_GRAY." » ".TextFormat::YELLOW.$v;
+            array_walk($topEntries, function(&$v, $k) use ($topEntries): void{
+                $v = TextFormat::RED.(array_search($k, array_keys($topEntries)) +1).". ".TextFormat::GREEN.$k.TextFormat::DARK_GRAY." » ".TextFormat::YELLOW.$v;
             });
             if(in_array("ALL", $displayTo)){
                 foreach(Server::getInstance()->getOnlinePlayers() as $player){

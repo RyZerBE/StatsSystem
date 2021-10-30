@@ -83,6 +83,7 @@ abstract class StatsHologram {
     }
 
     public function displayPlayer(Player $player){
+        if(!isset(StatsHologramManager::getInstance()->playerHolograms[$player->getName()])) StatsHologramManager::getInstance()->playerHolograms[$player->getName()] = [];
         if(in_array($this, StatsHologramManager::getInstance()->playerHolograms[$player->getName()])) return;
         $hologram = new HoloGram($this->position->asVector3(), TextFormat::YELLOW."Loading hologram...");
         $this->position->getLevel()->addParticle($hologram, [$player]);
