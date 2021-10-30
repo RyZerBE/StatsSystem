@@ -25,8 +25,7 @@ class PlayerStatsHologram extends StatsHologram {
     public function onUpdate(): void{
         parent::onUpdate();
         $playerName = $this->playerName;
-        $id = StatsHologramManager::getInstance()->playerHolograms[$playerName] ?? null;
-        if($id === null) return;
+        $id = $this->entityId;
         $title = $this->getTitle();
         StatsAsyncProvider::getStatistics($this->playerName, $this->getCategory(), function(?array $statistics) use ($id, $playerName, $title): void{
             if($statistics === null) return;

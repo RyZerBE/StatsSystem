@@ -8,6 +8,7 @@ use function date;
 use function implode;
 use function str_starts_with;
 use function strtotime;
+use function var_dump;
 use const MYSQLI_ASSOC;
 
 class StatsProvider {
@@ -63,7 +64,7 @@ class StatsProvider {
      * @return array
      */
     public static function getTopEntriesByColumn(mysqli $mysqli, string $category, string $column, int $limit = 10, string $sortOrder = "DESC"): array{
-        if(!($result = $mysqli->query("SELECT `player`, `" . $column . "` FROM " . $category . " ORDER BY " . $column . " " . $sortOrder . " LIMIT " . $limit))) return [];
+        $result = $mysqli->query("SELECT `player`, `$column` FROM $category ORDER BY $column $sortOrder LIMIT $limit");
         $entries = [];
         foreach($result->fetch_all(MYSQLI_ASSOC) as $data) $entries[$data["player"]] = $data[$column];
         return $entries;

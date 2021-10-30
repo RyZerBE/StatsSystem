@@ -6,8 +6,10 @@ use baubolp\core\entity\HoloGram;
 use pocketmine\level\Position;
 use pocketmine\Player;
 use pocketmine\Server;
+use pocketmine\utils\TextFormat;
 use function in_array;
 use function uniqid;
+use function var_dump;
 
 abstract class StatsHologram {
 
@@ -25,6 +27,8 @@ abstract class StatsHologram {
     private string $category;
     /** @var bool  */
     public bool $needUpdate = false;
+    /** @var int  */
+    public int $entityId = -1;
 
     /**
      * StatsHologram constructor.
@@ -79,29 +83,27 @@ abstract class StatsHologram {
     }
 
     public function displayPlayer(Player $player){
-        if(isset(StatsHologramManager::getInstance()->playerHolograms[$player->getName()])) return;
-        $hologram = new HoloGram($this->position->asVector3(), "");
+        if(in_array($this, StatsHologramManager::getInstance()->playerHolograms[$player->getName()])) return;
+        $hologram = new HoloGram($this->position->asVector3(), TextFormat::YELLOW."Loading hologram...");
         $this->position->getLevel()->addParticle($hologram, [$player]);
-        StatsHologramManager::getInstance()->playerHolograms[$player->getName()] = $hologram->getEntityId();
+        $this->entityId = $hologram->getEntityId();
+        StatsHologramManager::getInstance()->playerHolograms[$player->getName()][] = $this;
+        StatsHologramManager::getInstance()->addActiveStatsHologram($this);
+        $this->needUpdate = true;
     }
 
     public function display(): void{
         $server = Server::getInstance();
         if(in_array("ALL", $this->displayTo)){
             foreach($server->getOnlinePlayers() as $player){
-                if(isset(StatsHologramManager::getInstance()->playerHolograms[$player->getName()])) continue;
-                $hologram = new HoloGram($this->position->asVector3(), "");
-                $this->position->getLevel()->addParticle($hologram, [$player]);
-                StatsHologramManager::getInstance()->playerHolograms[$player->getName()] = $hologram->getEntityId();
+                $this->displayPlayer($player);
             }
         }else{
             foreach($this->displayTo as $playerName){
                 $player = $server->getPlayerExact($playerName);
                 if($player === null) continue;
-                if(isset(StatsHologramManager::getInstance()->playerHolograms[$player->getName()])) continue;
-                $hologram = new HoloGram($this->position->asVector3(), "");
-                $this->position->getLevel()->addParticle($hologram, [$player]);
-                StatsHologramManager::getInstance()->playerHolograms[$player->getName()] = $hologram->getEntityId();
+                if(in_array($this, StatsHologramManager::getInstance()->playerHolograms[$player->getName()])) continue;
+                $this->displayPlayer($player);
             }
         }
         $this->needUpdate = true;
@@ -109,20 +111,10 @@ abstract class StatsHologram {
 
     public function onUpdate(): void{
         $this->needUpdate = false;
-        foreach(Server::getInstance()->getOnlinePlayers() as $player) {
-            $id = StatsHologramManager::getInstance()->playerHolograms[$player->getName()] ?? null;
-            if($id !== null) continue;
-
+        foreach(Server::getInstance()->getOnlinePlayers() as $player){
             $this->displayPlayer($player);
         }
 
-        foreach(StatsHologramManager::getInstance()->playerHolograms as $playerName => $id) {
-            $player = Server::getInstance()->getPlayerExact($playerName);
-            if($player !== null) continue;
-
-            $hologram = Server::getInstance()->findEntity($id);
-            $hologram?->flagForDespawn();
-            unset(StatsHologramManager::getInstance()->playerHolograms[$playerName]);
-        }
+        var_dump($this->getTitle()." updated");
     }
 }
