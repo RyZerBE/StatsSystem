@@ -114,7 +114,5 @@ abstract class StatsHologram {
         foreach(Server::getInstance()->getOnlinePlayers() as $player){
             $this->displayPlayer($player);
         }
-
-        var_dump($this->getTitle()." updated");
     }
 }

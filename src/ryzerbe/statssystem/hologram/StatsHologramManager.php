@@ -92,7 +92,6 @@ class StatsHologramManager {
             $hologram->displayTo((array)$data["displayTo"]);
 
             $this->holograms[$hologram->getId()] = $hologram;
-            var_dump($hologram->getTitle());
         }
 
         MainLogger::getLogger()->info(count(array_keys($this->holograms))." holograms loaded!");
