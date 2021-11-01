@@ -29,18 +29,22 @@ abstract class StatsHologram {
     public bool $needUpdate = false;
     /** @var int  */
     public int $entityId = -1;
+    /** @var string  */
+    private string $group;
 
     /**
      * StatsHologram constructor.
      * @param Position $position
      * @param string $category
      * @param string $title
+     * @param string $group
      */
-    public function __construct(Position $position, string $category, string $title){
+    public function __construct(Position $position, string $category, string $title, string $group){
         $this->position = $position;
         $this->category = $category;
         $this->title = $title;
         $this->id = uniqid();
+        $this->group = $group;
     }
 
     /**
@@ -55,6 +59,13 @@ abstract class StatsHologram {
      */
     public function getTitle(): string{
         return $this->title;
+    }
+
+    /**
+     * @return string
+     */
+    public function getGroup(): string{
+        return $this->group;
     }
 
     /**

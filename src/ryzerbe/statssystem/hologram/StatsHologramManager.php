@@ -69,12 +69,13 @@ class StatsHologramManager {
      * @param Location $location
      * @param string $category
      * @param string $title
+     * @param string $group
      * @return StatsHologram|null
      */
-    public function getNewHologram(int $type, Location $location, string $category, string $title): ?StatsHologram{
+    public function getNewHologram(int $type, Location $location, string $category, string $title, string $group): ?StatsHologram{
         return match ($type) {
-            PlayerStatsHologram::NETWORK_ID => new PlayerStatsHologram($location->asPosition(), $category, $title),
-            TopEntriesHologram::NETWORK_ID => new TopEntriesHologram($location->asPosition(), $category, $title),
+            PlayerStatsHologram::NETWORK_ID => new PlayerStatsHologram($location->asPosition(), $category, $title, $group),
+            TopEntriesHologram::NETWORK_ID => new TopEntriesHologram($location->asPosition(), $category, $title, $group),
             default => null,
         };
     }
@@ -82,7 +83,7 @@ class StatsHologramManager {
     public function loadHolograms(): void{
         foreach(StatsSystem::getStatsConfig()->getAll(true) as $hologramId) {
             $data = StatsSystem::getStatsConfig()->get($hologramId);
-            $hologram = $this->getNewHologram($data["type"], LocationUtils::fromString($data["location"]), $data["category"], $data["title"]);
+            $hologram = $this->getNewHologram($data["type"], LocationUtils::fromString($data["location"]), $data["category"], $data["title"], $data["group"]);
             if($hologram instanceof TopEntriesHologram) {
                 $hologram->limit = $data["extra"]["limit"];
                 $hologram->column = $data["extra"]["sortBy"];

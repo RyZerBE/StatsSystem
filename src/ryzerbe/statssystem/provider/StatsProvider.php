@@ -4,11 +4,13 @@ namespace ryzerbe\statssystem\provider;
 
 use mysqli;
 use ryzerbe\statssystem\StatsSystem;
+use function array_keys;
+use function array_map;
+use function array_values;
 use function date;
 use function implode;
 use function str_starts_with;
 use function strtotime;
-use function var_dump;
 use const MYSQLI_ASSOC;
 
 class StatsProvider {
@@ -39,6 +41,21 @@ class StatsProvider {
             foreach($statistics as $key => $value) {
                 if(!str_starts_with($key, "m_")) continue;
                 $mysqli->query("UPDATE " . $category . " SET $key=DEFAULT WHERE player='$player'");
+            }
+        }
+    }
+
+    /**
+     * @param mysqli $mysqli
+     */
+    public static function checkMonthlyStatistics(mysqli $mysqli): void{
+        $categories = self::getCategories($mysqli);
+        foreach($categories as $category) {
+            $columns = self::getColumnsOfCategory($mysqli, $category);
+            foreach($columns as $column) {
+                $stat = $column["COLUMN_NAME"];
+                if(!str_starts_with($stat, "m_")) continue;
+                $mysqli->query("UPDATE ".$category." SET $stat=DEFAULT");
             }
         }
     }
@@ -91,6 +108,36 @@ class StatsProvider {
         $mysqli->query("INSERT INTO " . $category . " (player, " . $key . ") VALUES ('$player', '$value') ON DUPLICATE KEY UPDATE " . $key . "='$value'");
         if($monthly) $mysqli->query("INSERT INTO " . $category . " (player, m_" . $key . ") VALUES ('$player', '$value') ON DUPLICATE KEY UPDATE m_" . $key . "='$value'");
 
+    }
+
+    /**
+     * @param mysqli $mysqli
+     * @param string $player
+     * @param string $category
+     * @param array $statistics
+     * @param bool $monthly
+     */
+    public static function updateStatistics(mysqli $mysqli, string $player, string $category, array $statistics, bool $monthly = true){
+        $keys = array_map(function(string $key): string{
+            return "`".$key."`";
+        }, array_keys($statistics));
+        $i = 0;
+        $updateString = implode(", ", array_map(function($value) use ($keys, &$i): string{
+            return $keys[$i++]." = ".$value;
+        }, $statistics));
+
+        if($monthly){
+            $i = 0;
+            $monthlyKeys = array_map(function(string $key): string{
+                return "`m_".$key."`";
+            }, array_keys($statistics));
+            $monthlyUpdateString = implode(", ", array_map(function($value) use ($monthlyKeys, &$i): string{
+                return $monthlyKeys[$i++]." = ".$value;
+            }, $statistics));
+            $mysqli->query("INSERT INTO ".$category."(player, ".implode(", ", $monthlyKeys).") VALUES ('$player', ".implode(", ", array_values($statistics)).") ON DUPLICATE KEY UPDATE ".$monthlyUpdateString);
+        }
+
+        $mysqli->query("INSERT INTO ".$category."(player, ".implode(", ", $keys).") VALUES ('$player', ".implode(", ", array_values($statistics)).") ON DUPLICATE KEY UPDATE ".$updateString);
     }
 
     /**

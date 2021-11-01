@@ -45,12 +45,13 @@ class CreateStatsHoloForm extends StatsForm {
                     $form = new SimpleForm(function(Player $player, $data): void{
                         if($data === null) return;
 
+                        $group = explode("-", CloudProvider::getServer())[0] ?? "Lobby";
                         // TEST \\
-                        $hologram = new PlayerStatsHologram($player->asPosition(), $data, TextFormat::GREEN."Your ".TextFormat::GOLD.$data.TextFormat::GREEN." statistics:");
+                        $hologram = new PlayerStatsHologram($player->asPosition(), $data, TextFormat::GREEN."Your ".TextFormat::GOLD.$data.TextFormat::GREEN." statistics:", $group);
                         $hologram->playerName = $player->getName();
                         $hologram->displayTo([$player->getName()]);
                         $hologram->display();
-                        StatsHologramManager::getInstance()->createHologram($hologram, $player->asLocation(), explode("-", CloudProvider::getServer())[0] ?? "Lobby");
+                        StatsHologramManager::getInstance()->createHologram($hologram, $player->asLocation(), $group);
                         $player->sendMessage("Hologram erstellt.");
                     });
 
@@ -83,7 +84,8 @@ class CreateStatsHoloForm extends StatsForm {
                                 $limit = $limits[$data["top"]];
                                 $sortOrder = $order[$data["sortOrder"]];
                                 // TEST \\
-                                $hologram = new TopEntriesHologram($player->asPosition(), $category, $title);
+                                $group = explode("-", CloudProvider::getServer())[0] ?? "Lobby";
+                                $hologram = new TopEntriesHologram($player->asPosition(), $category, $title, $group);
                                 $hologram->column = $sortBy;
                                 $hologram->limit = $limit;
                                 $hologram->sortOrder = $sortOrder;

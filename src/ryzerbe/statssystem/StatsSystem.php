@@ -2,6 +2,7 @@
 
 namespace ryzerbe\statssystem;
 
+use BauboLP\Cloud\Provider\CloudProvider;
 use pocketmine\plugin\PluginBase;
 use pocketmine\utils\Config;
 use ryzerbe\statssystem\command\StatsCommand;
@@ -9,6 +10,8 @@ use ryzerbe\statssystem\hologram\HologramUpdateTask;
 use ryzerbe\statssystem\hologram\StatsHologramManager;
 use ryzerbe\statssystem\listener\PlayerJoinListener;
 use ryzerbe\statssystem\listener\PlayerQuitListener;
+use ryzerbe\statssystem\provider\StatsAsyncProvider;
+use function explode;
 use function file_exists;
 
 class StatsSystem extends PluginBase {
@@ -36,6 +39,11 @@ class StatsSystem extends PluginBase {
         ]);
         $this->getServer()->getPluginManager()->registerEvents(new PlayerJoinListener(), $this);
         $this->getServer()->getPluginManager()->registerEvents(new PlayerQuitListener(), $this);
+
+        $group = explode("-", CloudProvider::getServer())[0] ?? null;
+        if($group === "Lobby") {
+            StatsAsyncProvider::checkMonthlyStatistics();
+        }
     }
 
     public function initConfig(): void{
