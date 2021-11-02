@@ -50,12 +50,20 @@ class StatsProvider {
      */
     public static function checkMonthlyStatistics(mysqli $mysqli): void{
         $categories = self::getCategories($mysqli);
+        $currentDate = date("m:o");
         foreach($categories as $category) {
             $columns = self::getColumnsOfCategory($mysqli, $category);
-            foreach($columns as $column) {
-                $stat = $column["COLUMN_NAME"];
-                if(!str_starts_with($stat, "m_")) continue;
-                $mysqli->query("UPDATE ".$category." SET $stat=DEFAULT");
+            $query = $mysqli->query("SELECT date, player FROM " . $category);
+            while($row = $query->fetch_row()) {
+                $time = strtotime($row[0]);
+                $player = $row[1];
+                if(date("m:o", $time) !== $currentDate) {
+                    foreach($columns as $column) {
+                        $stat = $column["COLUMN_NAME"];
+                        if(!str_starts_with($stat, "m_")) continue;
+                        $mysqli->query("UPDATE " . $category . " SET " . $stat . "=DEFAULT, date=CURRENT_TIMESTAMP WHERE player='".$player . "'");
+                    }
+                }
             }
         }
     }
