@@ -16,6 +16,7 @@ use function number_format;
 use function str_starts_with;
 use function substr;
 use function time;
+use function ucfirst;
 
 class PlayerStatsHologram extends StatsHologram {
 
@@ -46,24 +47,24 @@ class PlayerStatsHologram extends StatsHologram {
             if(isset($alltime["kills"]) && isset($alltime["deaths"])) {
                 if($alltime["kills"] === 0) $alltime["K/D"] = $alltime["kills"].".00";
                 else if($alltime["deaths"] === 0) $alltime["K/D"] = "0.00";
-                else $alltime["K/D"] = number_format((int)$alltime["kills"] / (int)$alltime["deaths"], 2);
+                else $alltime["K/D"] = number_format((int)$alltime["kills"] / ((int)$alltime["deaths"] === 0 ? 1 : (int)$alltime["deaths"]), 2);
             }
 
             if(isset($monthly["kills"]) && isset($monthly["deaths"])) {
                 if($monthly["kills"] == 0) $monthly["K/D"] = $monthly["kills"].".00";
                 else if($monthly["deaths"] == 0) $monthly["K/D"] = "0.00";
-                else $monthly["K/D"] = number_format((int)$monthly["kills"] / (int)$monthly["deaths"], 2);
+                else $monthly["K/D"] = number_format((int)$monthly["kills"] / ((int)$monthly["deaths"] === 0 ? 1 : (int)$monthly["deaths"]), 2);
             }
 
             $content = "§l§6Monthly stats§r §8(§b".date("F", time())."§8)";
             array_walk($monthly, function(&$v, $k): void{
-                $v = $k.": §b".$v;
+                $v = ucfirst($k).": §b".$v;
             });
             $content .= "\n\n§7» §f".implode("\n §7» §f", $monthly);
 
             $content .= "\n\n§l§6Alltime stats§r";
             array_walk($alltime, function(&$v, $k): void{
-                $v = $k.": §b".$v;
+                $v = ucfirst($k).": §b".$v;
             });
             $content .= "\n\n§7» §f".implode("\n §7» §f", $alltime);
 
