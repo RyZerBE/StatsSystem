@@ -12,6 +12,7 @@ use ryzerbe\statssystem\provider\StatsAsyncProvider;
 use function array_walk;
 use function date;
 use function implode;
+use function number_format;
 use function str_starts_with;
 use function substr;
 use function time;
@@ -40,6 +41,18 @@ class PlayerStatsHologram extends StatsHologram {
                 }else{
                     $alltime[$k] = $v;
                 }
+            }
+
+            if(isset($alltime["kills"]) && isset($alltime["deaths"])) {
+                if($alltime["kills"] === 0) $alltime["K/D"] = $alltime["kills"].".00";
+                else if($alltime["deaths"] === 0) $alltime["K/D"] = "0.00";
+                else $alltime["K/D"] = number_format((int)$alltime["kills"] / (int)$alltime["deaths"], 2);
+            }
+
+            if(isset($monthly["kills"]) && isset($monthly["deaths"])) {
+                if($monthly["kills"] == 0) $monthly["K/D"] = $monthly["kills"].".00";
+                else if($monthly["deaths"] == 0) $monthly["K/D"] = "0.00";
+                else $monthly["K/D"] = number_format((int)$monthly["kills"] / (int)$monthly["deaths"], 2);
             }
 
             $content = "§l§6Monthly stats§r §8(§b".date("F", time())."§8)";

@@ -48,9 +48,9 @@ class StatsSystem extends PluginBase {
         if($group === "Lobby") {
             StatsAsyncProvider::checkMonthlyStatistics();
         }
-        AsyncExecutor::submitMySQLAsyncTask("RyzerCore", function(mysqli $mysqli): void{
+       /* AsyncExecutor::submitMySQLAsyncTask("RyzerCore", function(mysqli $mysqli): void{
             $mysqli->query("CREATE TABLE IF NOT EXISTS statstokens(player varchar(32) PRIMARY KEY, tokens INT NOT NULL DEFAULT 0)");
-        });
+        });*/
     }
 
     public function initConfig(): void{
