@@ -76,11 +76,12 @@ class StatsAsyncProvider {
     /**
      * @param string $player
      * @param string $category
+     * @param Closure|null $completeFunction
      */
-    public static function resetStatistics(string $player, string $category): void{
+    public static function resetStatistics(string $player, string $category, ?Closure $completeFunction = null): void{
         AsyncExecutor::submitMySQLAsyncTask(StatsSystem::DATABASE, function(mysqli $mysqli) use ($player, $category): void{
             StatsProvider::resetStatistics($mysqli, $player, $category);
-        });
+        }, $completeFunction);
     }
 
     /**

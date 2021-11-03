@@ -3,9 +3,12 @@
 namespace ryzerbe\statssystem;
 
 use BauboLP\Cloud\Provider\CloudProvider;
+use baubolp\core\provider\AsyncExecutor;
+use mysqli;
 use pocketmine\plugin\PluginBase;
 use pocketmine\utils\Config;
 use ryzerbe\statssystem\command\StatsCommand;
+use ryzerbe\statssystem\command\StatsResetCommand;
 use ryzerbe\statssystem\hologram\HologramUpdateTask;
 use ryzerbe\statssystem\hologram\StatsHologramManager;
 use ryzerbe\statssystem\listener\PlayerJoinListener;
@@ -35,7 +38,8 @@ class StatsSystem extends PluginBase {
         $this->getScheduler()->scheduleRepeatingTask(new HologramUpdateTask(), 1);
 
         $this->getServer()->getCommandMap()->registerAll("statssystem", [
-           new StatsCommand()
+           new StatsCommand(),
+            new StatsResetCommand()
         ]);
         $this->getServer()->getPluginManager()->registerEvents(new PlayerJoinListener(), $this);
         $this->getServer()->getPluginManager()->registerEvents(new PlayerQuitListener(), $this);
@@ -44,6 +48,9 @@ class StatsSystem extends PluginBase {
         if($group === "Lobby") {
             StatsAsyncProvider::checkMonthlyStatistics();
         }
+        AsyncExecutor::submitMySQLAsyncTask("RyzerCore", function(mysqli $mysqli): void{
+            $mysqli->query("CREATE TABLE IF NOT EXISTS statstokens(player varchar(32) PRIMARY KEY, tokens INT NOT NULL DEFAULT 0)");
+        });
     }
 
     public function initConfig(): void{
