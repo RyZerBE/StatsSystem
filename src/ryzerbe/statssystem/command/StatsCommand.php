@@ -2,12 +2,12 @@
 
 namespace ryzerbe\statssystem\command;
 
-use baubolp\core\Ryzer;
 use jojoe77777\FormAPI\SimpleForm;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
 use pocketmine\Player;
 use pocketmine\utils\TextFormat;
+use ryzerbe\core\RyZerBE;
 use ryzerbe\statssystem\form\holo\CreateStatsHoloForm;
 use ryzerbe\statssystem\form\SelectPlayerForm;
 use ryzerbe\statssystem\hologram\type\PlayerStatsHologram;
@@ -60,9 +60,9 @@ class StatsCommand extends Command {
                     //todo:
                     break;
                 default:
-                    $sender->sendMessage(Ryzer::PREFIX.TextFormat::RED."/stats createholo <identifier:string> <category:string> <title:string> <orderBy:string> <limit:string>");
-                    $sender->sendMessage(Ryzer::PREFIX.TextFormat::RED."/stats deleteholo <identifier:string>");
-                    $sender->sendMessage(Ryzer::PREFIX.TextFormat::RED."/stats editholo <identifier:string>");
+                    $sender->sendMessage(RyZerBE::PREFIX.TextFormat::RED."/stats createholo <identifier:string> <category:string> <title:string> <orderBy:string> <limit:string>");
+                    $sender->sendMessage(RyZerBE::PREFIX.TextFormat::RED."/stats deleteholo <identifier:string>");
+                    $sender->sendMessage(RyZerBE::PREFIX.TextFormat::RED."/stats editholo <identifier:string>");
                     break;
             }
             return;

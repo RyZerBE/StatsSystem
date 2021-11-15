@@ -2,7 +2,7 @@
 
 namespace ryzerbe\statssystem\provider;
 
-use baubolp\core\provider\AsyncExecutor;
+use ryzerbe\core\util\async\AsyncExecutor;
 use Closure;
 use mysqli;
 use pocketmine\Server;

@@ -2,13 +2,13 @@
 
 namespace ryzerbe\statssystem\form;
 
-use baubolp\core\provider\AsyncExecutor;
-use baubolp\core\provider\LanguageProvider;
 use jojoe77777\FormAPI\SimpleForm;
 use mysqli;
 use pocketmine\Player;
 use pocketmine\Server;
 use pocketmine\utils\TextFormat;
+use ryzerbe\core\language\LanguageProvider;
+use ryzerbe\core\util\async\AsyncExecutor;
 use ryzerbe\statssystem\provider\StatsProvider;
 use ryzerbe\statssystem\StatsSystem;
 use function date;

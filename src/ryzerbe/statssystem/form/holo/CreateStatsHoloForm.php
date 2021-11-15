@@ -4,14 +4,14 @@ namespace ryzerbe\statssystem\form\holo;
 
 use BauboLP\Cloud\CloudBridge;
 use BauboLP\Cloud\Provider\CloudProvider;
-use baubolp\core\provider\AsyncExecutor;
-use baubolp\core\Ryzer;
 use jojoe77777\FormAPI\CustomForm;
 use jojoe77777\FormAPI\SimpleForm;
 use mysqli;
 use pocketmine\Player;
 use pocketmine\Server;
 use pocketmine\utils\TextFormat;
+use ryzerbe\core\RyZerBE;
+use ryzerbe\core\util\async\AsyncExecutor;
 use ryzerbe\statssystem\form\StatsForm;
 use ryzerbe\statssystem\hologram\StatsHologramManager;
 use ryzerbe\statssystem\hologram\type\PlayerStatsHologram;
@@ -36,7 +36,7 @@ class CreateStatsHoloForm extends StatsForm {
             $player = $server->getPlayerExact($playerName);
             if($player === null) return;
             if(count($categories) <= 0) {
-                $player->sendMessage(Ryzer::PREFIX.TextFormat::RED."Es wurden keine Kategorien erstellt..");
+                $player->sendMessage(RyZerBE::PREFIX.TextFormat::RED."Es wurden keine Kategorien erstellt..");
                 return;
             }
 

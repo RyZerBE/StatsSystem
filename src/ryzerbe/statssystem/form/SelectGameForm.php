@@ -2,12 +2,12 @@
 
 namespace ryzerbe\statssystem\form;
 
-use baubolp\core\provider\AsyncExecutor;
 use jojoe77777\FormAPI\SimpleForm;
 use mysqli;
 use pocketmine\Player;
 use pocketmine\Server;
 use pocketmine\utils\TextFormat;
+use ryzerbe\core\util\async\AsyncExecutor;
 use ryzerbe\statssystem\provider\StatsProvider;
 use ryzerbe\statssystem\StatsSystem;
 use function var_dump;

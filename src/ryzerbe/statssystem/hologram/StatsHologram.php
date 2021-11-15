@@ -2,11 +2,11 @@
 
 namespace ryzerbe\statssystem\hologram;
 
-use baubolp\core\entity\HoloGram;
 use pocketmine\level\Position;
 use pocketmine\Player;
 use pocketmine\Server;
 use pocketmine\utils\TextFormat;
+use ryzerbe\core\entity\Hologram;
 use function in_array;
 use function uniqid;
 use function var_dump;
@@ -96,7 +96,7 @@ abstract class StatsHologram {
     public function displayPlayer(Player $player){
         if(!isset(StatsHologramManager::getInstance()->playerHolograms[$player->getName()])) StatsHologramManager::getInstance()->playerHolograms[$player->getName()] = [];
         if(in_array($this, StatsHologramManager::getInstance()->playerHolograms[$player->getName()])) return;
-        $hologram = new HoloGram($this->position->asVector3(), TextFormat::YELLOW."Loading hologram...");
+        $hologram = new Hologram($this->position->asVector3(), TextFormat::YELLOW."Loading hologram...");
         $this->position->getLevel()->addParticle($hologram, [$player]);
         $this->entityId = $hologram->getEntityId();
         StatsHologramManager::getInstance()->playerHolograms[$player->getName()][] = $this;

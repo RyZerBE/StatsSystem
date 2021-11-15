@@ -3,10 +3,9 @@
 namespace ryzerbe\statssystem\listener;
 
 use BauboLP\Cloud\Provider\CloudProvider;
-use baubolp\core\listener\own\RyZerPlayerAuthEvent;
-use baubolp\core\provider\AsyncExecutor;
 use pocketmine\event\Listener;
 use pocketmine\Server;
+use ryzerbe\core\event\player\RyZerPlayerAuthEvent;use ryzerbe\core\util\async\AsyncExecutor;
 use ryzerbe\statssystem\hologram\StatsHologram;
 use ryzerbe\statssystem\hologram\StatsHologramManager;
 use ryzerbe\statssystem\hologram\type\PlayerStatsHologram;

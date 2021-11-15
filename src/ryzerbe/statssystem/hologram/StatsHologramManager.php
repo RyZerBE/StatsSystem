@@ -2,19 +2,15 @@
 
 namespace ryzerbe\statssystem\hologram;
 
-use baubolp\core\util\LocationUtils;
-use pocketmine\level\Level;
 use pocketmine\level\Location;
-use pocketmine\level\Position;
-use pocketmine\math\Vector3;
 use pocketmine\utils\MainLogger;
 use pocketmine\utils\SingletonTrait;
+use ryzerbe\core\util\LocationUtils;
 use ryzerbe\statssystem\hologram\type\PlayerStatsHologram;
 use ryzerbe\statssystem\hologram\type\TopEntriesHologram;
 use ryzerbe\statssystem\StatsSystem;
 use function array_keys;
 use function count;
-use function var_dump;
 
 class StatsHologramManager {
 

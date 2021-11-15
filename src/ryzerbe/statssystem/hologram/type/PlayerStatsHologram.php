@@ -2,9 +2,10 @@
 
 namespace ryzerbe\statssystem\hologram\type;
 
-use baubolp\core\entity\HoloGram;
-use baubolp\core\Ryzer;
+use pocketmine\entity\DataPropertyManager;
+use pocketmine\entity\Entity;
 use pocketmine\level\particle\FloatingTextParticle;
+use pocketmine\network\mcpe\protocol\SetActorDataPacket;
 use pocketmine\Server;
 use ryzerbe\statssystem\hologram\StatsHologram;
 use ryzerbe\statssystem\hologram\StatsHologramManager;
@@ -71,7 +72,13 @@ class PlayerStatsHologram extends StatsHologram {
             $player = Server::getInstance()->getPlayerExact($playerName);
             if($player === null) return;
 
-            Ryzer::renameEntity($id, $title."\n".$content, "", [$player]);
+            $actorPacket = new SetActorDataPacket();
+            $actorPacket->entityRuntimeId = $id;
+
+            $dataPropertyManager = new DataPropertyManager();
+            $dataPropertyManager->setString(Entity::DATA_NAMETAG, $title."\n".$content);
+            $actorPacket->metadata = $dataPropertyManager->getAll();
+            $player->dataPacket($actorPacket);
         });
     }
 }

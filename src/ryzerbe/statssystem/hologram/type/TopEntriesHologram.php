@@ -3,6 +3,9 @@
 namespace ryzerbe\statssystem\hologram\type;
 
 use baubolp\core\Ryzer;
+use pocketmine\entity\DataPropertyManager;
+use pocketmine\entity\Entity;
+use pocketmine\network\mcpe\protocol\SetActorDataPacket;
 use pocketmine\Server;
 use pocketmine\utils\TextFormat;
 use ryzerbe\statssystem\hologram\StatsHologram;
@@ -36,14 +39,26 @@ class TopEntriesHologram extends StatsHologram {
             });
             if(in_array("ALL", $displayTo)){
                 foreach(Server::getInstance()->getOnlinePlayers() as $player){
-                    Ryzer::renameEntity($hologramId, implode("\n", $topEntries), $title, [$player]);
+                    $actorPacket = new SetActorDataPacket();
+                    $actorPacket->entityRuntimeId = $hologramId;
+
+                    $dataPropertyManager = new DataPropertyManager();
+                    $dataPropertyManager->setString(Entity::DATA_NAMETAG, $title."\n".implode("\n", $topEntries));
+                    $actorPacket->metadata = $dataPropertyManager->getAll();
+                    $player->dataPacket($actorPacket);
                 }
             }else{
                 foreach($displayTo as $playerName){
                     $player = Server::getInstance()->getPlayerExact($playerName);
                     if($player === null) return;
 
-                    Ryzer::renameEntity($hologramId, $title."\n".implode("\n", $topEntries), "", [$player]);
+                    $actorPacket = new SetActorDataPacket();
+                    $actorPacket->entityRuntimeId = $hologramId;
+
+                    $dataPropertyManager = new DataPropertyManager();
+                    $dataPropertyManager->setString(Entity::DATA_NAMETAG, $title."\n".implode("\n", $topEntries));
+                    $actorPacket->metadata = $dataPropertyManager->getAll();
+                    $player->dataPacket($actorPacket);
                 }
             }
         }, $this->limit, $this->sortOrder);

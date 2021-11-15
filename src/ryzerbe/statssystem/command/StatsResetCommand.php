@@ -2,9 +2,6 @@
 
 namespace ryzerbe\statssystem\command;
 
-use baubolp\core\provider\AsyncExecutor;
-use baubolp\core\provider\LanguageProvider;
-use baubolp\core\Ryzer;
 use jojoe77777\FormAPI\SimpleForm;
 use mysqli;
 use pocketmine\command\Command;
@@ -12,7 +9,9 @@ use pocketmine\command\CommandSender;
 use pocketmine\Player;
 use pocketmine\Server;
 use pocketmine\utils\TextFormat;
-use ryzerbe\statssystem\form\StatsResultForm;
+use ryzerbe\core\language\LanguageProvider;
+use ryzerbe\core\RyZerBE;
+use ryzerbe\core\util\async\AsyncExecutor;
 use ryzerbe\statssystem\provider\StatsAsyncProvider;
 use ryzerbe\statssystem\provider\StatsProvider;
 use ryzerbe\statssystem\StatsSystem;
@@ -44,23 +43,23 @@ class StatsResetCommand extends Command {
                         AsyncExecutor::submitMySQLAsyncTask("RyzerCore", function(mysqli $mysqli) use ($name, $count): void{
                             $mysqli->query("INSERT INTO `statstokens`(player, `tokens`) VALUES ('$name', '$count') ON DUPLICATE KEY UPDATE `tokens` = tokens+$count");
                         });
-                        $sender->sendMessage(Ryzer::PREFIX.TextFormat::GREEN."Der Spieler $name hat ".TextFormat::AQUA.$count." Statsreset-Tokens ".TextFormat::GREEN."erhalten.");
+                        $sender->sendMessage(RyZerBE::PREFIX.TextFormat::GREEN."Der Spieler $name hat ".TextFormat::AQUA.$count." Statsreset-Tokens ".TextFormat::GREEN."erhalten.");
                         break;
                     case "remove":
                         AsyncExecutor::submitMySQLAsyncTask("RyzerCore", function(mysqli $mysqli) use ($name, $count): void{
                             $mysqli->query("INSERT INTO `statstokens`(player, `tokens`) VALUES ('$name', '0') ON DUPLICATE KEY UPDATE `tokens` = tokens-$count");
                         });
-                        $sender->sendMessage(Ryzer::PREFIX.TextFormat::GREEN."Dem Spieler $name wurden ".TextFormat::AQUA.$count." Statsreset-Tokens ".TextFormat::RED."entfernt.");
+                        $sender->sendMessage(RyZerBE::PREFIX.TextFormat::GREEN."Dem Spieler $name wurden ".TextFormat::AQUA.$count." Statsreset-Tokens ".TextFormat::RED."entfernt.");
                         break;
                     case "set":
                         AsyncExecutor::submitMySQLAsyncTask("RyzerCore", function(mysqli $mysqli) use ($name, $count): void{
                             $mysqli->query("INSERT INTO `statstokens`(player, `tokens`) VALUES ('$name', '$count') ON DUPLICATE KEY UPDATE `tokens` = $count");
                         });
-                        $sender->sendMessage(Ryzer::PREFIX.TextFormat::GREEN."Der Spieler $name besitzt nun ".TextFormat::AQUA.$count." Statsreset-Tokens.");
+                        $sender->sendMessage(RyZerBE::PREFIX.TextFormat::GREEN."Der Spieler $name besitzt nun ".TextFormat::AQUA.$count." Statsreset-Tokens.");
                         break;
                 }
             }else {
-                $sender->sendMessage(Ryzer::PREFIX.TextFormat::RED."/statsreset <add|remove|set> <Player:string> <Count:int>");
+                $sender->sendMessage(RyZerBE::PREFIX.TextFormat::RED."/statsreset <add|remove|set> <Player:string> <Count:int>");
             }
             return;
         }
@@ -93,7 +92,7 @@ class StatsResetCommand extends Command {
                     if($player === null) return;
 
                     if($tokens <= 0) {
-                        $player->sendMessage(Ryzer::PREFIX.LanguageProvider::getMessageContainer("no-stats-tokens", $playerName));
+                        $player->sendMessage(RyZerBE::PREFIX.LanguageProvider::getMessageContainer("no-stats-tokens", $playerName));
                         return;
                     }
 
@@ -101,7 +100,7 @@ class StatsResetCommand extends Command {
                         $player = $server->getPlayerExact($playerName);
                         if($player === null) return;
 
-                        $player->sendMessage(Ryzer::PREFIX.LanguageProvider::getMessageContainer("stats-reset-success", $playerName, ["#category" => $category]));
+                        $player->sendMessage(RyZerBE::PREFIX.LanguageProvider::getMessageContainer("stats-reset-success", $playerName, ["#category" => $category]));
 
                     });
                 });
