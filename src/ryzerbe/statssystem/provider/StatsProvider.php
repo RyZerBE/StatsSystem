@@ -149,12 +149,14 @@ class StatsProvider {
     }
 
     public static function appendStatistic(mysqli $mysqli, string $player, string $category, string $statistic, int $count, bool $monthly = true): void{
-        $mysqli->query("INSERT INTO ".$category."(player, `".$statistic."`) VALUES ('$player', '$count') ON DUPLICATE KEY UPDATE `".$statistic."` = ".$statistic." + ".$count);
+        if(self::getStatistics($mysqli, $player, $category) === null) $mysqli->query("INSERT INTO ".$category."(player, `".$statistic."`) VALUES ('$player', DEFAULT)");
+        $mysqli->query("INSERT INTO ".$category."(player, `".$statistic."`) VALUES ('$player', DEFAULT) ON DUPLICATE KEY UPDATE `".$statistic."` = ".$statistic." + ".$count);
         if($monthly) $mysqli->query("INSERT INTO ".$category."(player, `m_".$statistic."`) VALUES ('$player', '$count') ON DUPLICATE KEY UPDATE `m_".$statistic."` = m_".$statistic." + ".$count);
     }
 
     public static function deductStatistic(mysqli $mysqli, string $player, string $category, string $statistic, int $count, bool $monthly = true): void{
-        $mysqli->query("INSERT INTO ".$category."(player, `".$statistic."`) VALUES ('$player', '$count') ON DUPLICATE KEY UPDATE `".$statistic."` = ".$statistic." - ".$count);
+        if(self::getStatistics($mysqli, $player, $category) === null) $mysqli->query("INSERT INTO ".$category."(player, `".$statistic."`) VALUES ('$player', DEFAULT)");
+        $mysqli->query("INSERT INTO ".$category."(player, `".$statistic."`) VALUES ('$player', DEFAULT) ON DUPLICATE KEY UPDATE `".$statistic."` = ".$statistic." - ".$count);
         if($monthly) $mysqli->query("INSERT INTO ".$category."(player, `m_".$statistic."`) VALUES ('$player', '$count') ON DUPLICATE KEY UPDATE `m_".$statistic."` = m_".$statistic." - ".$count);
     }
 
