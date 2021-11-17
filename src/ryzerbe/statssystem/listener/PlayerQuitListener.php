@@ -15,7 +15,7 @@ class PlayerQuitListener implements Listener {
     public function onQuit(PlayerQuitEvent $event){
         $player = $event->getPlayer();
 
-        foreach(StatsHologramManager::getInstance()->playerHolograms[$player->getName()] as $statsHologram) {
+        foreach((StatsHologramManager::getInstance()->playerHolograms[$player->getName()] ?? []) as $statsHologram) {
             $hologram = Server::getInstance()->findEntity($statsHologram->entityId);
             $hologram?->flagForDespawn();
             StatsHologramManager::getInstance()->removeActiveStatsHologram($statsHologram);

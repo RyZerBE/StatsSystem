@@ -76,6 +76,20 @@ class StatsAsyncProvider {
     /**
      * @param string $player
      * @param string $category
+     * @param string $statistic
+     * @param int $count
+     * @param bool $monthly
+     */
+    public static function deductStatistic(string $player, string $category, string $statistic, int $count, bool $monthly = true): void{
+        AsyncExecutor::submitMySQLAsyncTask(StatsSystem::DATABASE, function(mysqli $mysqli) use ($player, $category, $statistic, $count, $monthly): void{
+            StatsProvider::checkMonthlyStatistic($mysqli, $player, $category);
+            StatsProvider::deductStatistic($mysqli, $player, $category, $statistic, $count, $monthly);
+        });
+    }
+
+    /**
+     * @param string $player
+     * @param string $category
      * @param Closure|null $completeFunction
      */
     public static function resetStatistics(string $player, string $category, ?Closure $completeFunction = null): void{
