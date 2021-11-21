@@ -16,14 +16,9 @@ use function number_format;
 use function str_starts_with;
 use function substr;
 use function time;
-use function var_dump;
+use function ucfirst;
 
 class StatsResultForm extends StatsForm {
-
-    /**
-     * @param Player $player
-     * @param array $extraData
-     */
     public static function open(Player $player, array $extraData = []): void{
         $playerName = $extraData["player"];
         $senderName = $extraData["sender"];
@@ -34,12 +29,11 @@ class StatsResultForm extends StatsForm {
             $player = $server->getPlayerExact($senderName);
             if($player === null) return;
 
-            $form = new SimpleForm(function(Player $player, $data): void{
-                if($data === null) return;
-
-                SelectPlayerForm::open($player);
+            $form = new SimpleForm(function(Player $player, $data) use ($playerName): void{
+                if($data !== "back") return;
+                SelectGameForm::open($player, ["player" => $playerName]);
             });
-            $form->setTitle(TextFormat::GOLD.$category);
+            $form->setTitle(TextFormat::GOLD.ucfirst($category));
             $form->addButton(TextFormat::RED."⇦ Back", -1, "", "back");
             if($statistics === null){
                 $form->setContent(LanguageProvider::getMessageContainer("no-stats", $senderName, ["#game" => $category]));
@@ -47,7 +41,8 @@ class StatsResultForm extends StatsForm {
                 return;
             }
 
-            $monthly = []; $alltime = [];
+            $monthly = [];
+            $alltime = [];
 
             foreach($statistics as $k => $v){
                 if($k === "date") continue;
@@ -73,15 +68,15 @@ class StatsResultForm extends StatsForm {
 
             $content = "§l§6Monthly stats§r §8(§b".date("F", time())."§8)";
             array_walk($monthly, function(&$v, $k): void{
-                $v = $k.": §7".$v;
+                $v = ucfirst($k).": §7".$v;
             });
-            $content .= "\n\n§7» §f".implode("\n §7» §f", $monthly);
+            $content .= "\n\n §7» §f".implode("\n §7» §f", $monthly);
 
             $content .= "\n\n§l§6Alltime stats§r";
             array_walk($alltime, function(&$v, $k): void{
-                $v = $k.": §7".$v;
+                $v = ucfirst($k).": §7".$v;
             });
-            $content .= "\n\n§7» §f".implode("\n §7» §f", $alltime);
+            $content .= "\n\n §7» §f".implode("\n §7» §f", $alltime);
 
             $form->setContent($content);
             $form->sendToPlayer($player);

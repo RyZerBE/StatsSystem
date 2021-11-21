@@ -2,7 +2,6 @@
 
 namespace ryzerbe\statssystem\form\holo;
 
-use BauboLP\Cloud\CloudBridge;
 use BauboLP\Cloud\Provider\CloudProvider;
 use jojoe77777\FormAPI\CustomForm;
 use jojoe77777\FormAPI\SimpleForm;
@@ -22,11 +21,6 @@ use function count;
 use function explode;
 
 class CreateStatsHoloForm extends StatsForm {
-
-    /**
-     * @param Player $player
-     * @param array $extraData
-     */
     public static function open(Player $player, array $extraData = []): void{
         $playerName = $player->getName();
         $type = $extraData["type"];

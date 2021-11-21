@@ -2,10 +2,10 @@
 
 namespace ryzerbe\statssystem\provider;
 
-use ryzerbe\core\util\async\AsyncExecutor;
 use Closure;
 use mysqli;
 use pocketmine\Server;
+use ryzerbe\core\util\async\AsyncExecutor;
 use ryzerbe\statssystem\StatsSystem;
 
 class StatsAsyncProvider {

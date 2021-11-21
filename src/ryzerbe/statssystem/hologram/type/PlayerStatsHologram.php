@@ -4,11 +4,9 @@ namespace ryzerbe\statssystem\hologram\type;
 
 use pocketmine\entity\DataPropertyManager;
 use pocketmine\entity\Entity;
-use pocketmine\level\particle\FloatingTextParticle;
 use pocketmine\network\mcpe\protocol\SetActorDataPacket;
 use pocketmine\Server;
 use ryzerbe\statssystem\hologram\StatsHologram;
-use ryzerbe\statssystem\hologram\StatsHologramManager;
 use ryzerbe\statssystem\provider\StatsAsyncProvider;
 use function array_walk;
 use function date;

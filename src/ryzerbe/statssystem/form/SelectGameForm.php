@@ -10,7 +10,7 @@ use pocketmine\utils\TextFormat;
 use ryzerbe\core\util\async\AsyncExecutor;
 use ryzerbe\statssystem\provider\StatsProvider;
 use ryzerbe\statssystem\StatsSystem;
-use function var_dump;
+use function ucfirst;
 
 class SelectGameForm extends StatsForm {
 
@@ -36,7 +36,7 @@ class SelectGameForm extends StatsForm {
             });
 
             foreach($categories as $category) {
-                $form->addButton(TextFormat::GOLD.$category, -1, "", $category);
+                $form->addButton(TextFormat::GOLD.ucfirst($category), -1, "", $category);
             }
             $form->sendToPlayer($player);
         });

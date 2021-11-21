@@ -4,7 +4,6 @@ namespace ryzerbe\statssystem;
 
 use BauboLP\Cloud\Provider\CloudProvider;
 use baubolp\core\provider\AsyncExecutor;
-use mysqli;
 use pocketmine\plugin\PluginBase;
 use pocketmine\utils\Config;
 use ryzerbe\statssystem\command\StatsCommand;

@@ -9,7 +9,6 @@ use pocketmine\utils\TextFormat;
 use ryzerbe\core\entity\Hologram;
 use function in_array;
 use function uniqid;
-use function var_dump;
 
 abstract class StatsHologram {
 
