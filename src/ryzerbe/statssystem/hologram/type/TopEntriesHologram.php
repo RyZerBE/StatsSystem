@@ -2,7 +2,6 @@
 
 namespace ryzerbe\statssystem\hologram\type;
 
-use baubolp\core\Ryzer;
 use pocketmine\entity\DataPropertyManager;
 use pocketmine\entity\Entity;
 use pocketmine\network\mcpe\protocol\SetActorDataPacket;
@@ -17,8 +16,7 @@ use function implode;
 use function in_array;
 
 class TopEntriesHologram extends StatsHologram {
-
-    const NETWORK_ID = 2;
+    public const NETWORK_ID = 2;
 
     /** @var string */
     public string $column = "";

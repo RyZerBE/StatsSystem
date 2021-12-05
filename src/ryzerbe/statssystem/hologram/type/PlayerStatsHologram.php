@@ -18,9 +18,8 @@ use function time;
 use function ucfirst;
 
 class PlayerStatsHologram extends StatsHologram {
+    public const NETWORK_ID = 0;
 
-    const NETWORK_ID = 0;
-    /** @var string  */
     public string $playerName = "";
 
     public function onUpdate(): void{

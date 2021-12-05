@@ -11,8 +11,7 @@ use function in_array;
 use function uniqid;
 
 abstract class StatsHologram {
-
-    const NETWORK_ID = -1;
+    public const NETWORK_ID = -1;
     
     /** @var string  */
     private string $id;
@@ -93,8 +92,7 @@ abstract class StatsHologram {
     }
 
     public function displayPlayer(Player $player){
-        if(!isset(StatsHologramManager::getInstance()->playerHolograms[$player->getName()])) StatsHologramManager::getInstance()->playerHolograms[$player->getName()] = [];
-        if(in_array($this, StatsHologramManager::getInstance()->playerHolograms[$player->getName()])) return;
+        if(in_array($this, (StatsHologramManager::getInstance()->playerHolograms[$player->getName()] ?? []))) return;
         $hologram = new Hologram($this->position->asVector3(), TextFormat::YELLOW."Loading hologram...");
         $this->position->getLevel()->addParticle($hologram, [$player]);
         $this->entityId = $hologram->getEntityId();
