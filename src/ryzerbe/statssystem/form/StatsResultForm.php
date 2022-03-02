@@ -55,8 +55,8 @@ class StatsResultForm extends StatsForm {
             }
 
             if(isset($alltime["kills"]) && isset($alltime["deaths"])) {
-                if($alltime["kills"] === 0) $alltime["K/D"] = $alltime["kills"].".00";
-                else if($alltime["deaths"] === 0) $alltime["K/D"] = "0.00";
+                if($alltime["kills"] == 0) $alltime["K/D"] = $alltime["kills"].".00";
+                else if($alltime["deaths"] == 0) $alltime["K/D"] = "0.00";
                 else $alltime["K/D"] = number_format((int)$alltime["kills"] / (int)$alltime["deaths"], 2);
             }
 
